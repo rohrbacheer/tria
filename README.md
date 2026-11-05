@@ -2,10 +2,12 @@
 
 [![CI](https://github.com/rohrbacheer/puchub/actions/workflows/ci.yml/badge.svg)](https://github.com/rohrbacheer/puchub/actions/workflows/ci.yml)
 
-Portal de TI com IA Generativa: depois do login, o usuário tira dúvidas com a **assistente
-virtual** (o Gemini responde na tela e classifica a categoria) e **abre chamados** que a IA
-tria automaticamente — categoria, prioridade e uma primeira orientação. O colaborador vê os
-próprios chamados; o perfil de técnico vê a fila inteira. A ideia nasceu do **CotraHub**,
+Portal de TI com IA Generativa e três perfis de acesso. Depois do login, o usuário tira
+dúvidas com a **assistente virtual** (o Gemini responde na tela e classifica a categoria) e
+**abre chamados** com título, descrição e classificação escolhida por ele (categoria e
+prioridade) — e a IA escreve a **primeira orientação** enquanto o atendimento não chega. O
+usuário vê os próprios chamados; **técnico** e **administrador** veem a fila inteira; só o
+administrador configura a integração com a IA pela tela. A ideia nasceu do **CotraHub**,
 portal interno de TI que desenvolvo no trabalho — aqui recriada do zero como uma
 mini-aplicação pública para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
 
@@ -34,9 +36,10 @@ frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (
 | `POST` | `/login`     | Valida as credenciais e abre a sessão (token Bearer)                   |
 | `POST` | `/perguntar` | Envia a pergunta à IA e devolve resposta + categoria (grava tudo)      |
 | `GET`  | `/historico` | Perguntas já respondidas do usuário logado, em ordem cronológica       |
-| `POST` | `/chamados`  | Abre um chamado: a IA tria categoria, prioridade e primeira orientação |
-| `GET`  | `/chamados`  | Chamados do usuário; o perfil de técnico vê a fila inteira             |
-| `GET`  | `/integracoes` | Estado da integração com a IA (só técnico; a chave nunca volta)      |
+| `GET`  | `/opcoes`    | Categorias e prioridades aceitas no chamado manual                     |
+| `POST` | `/chamados`  | Abre um chamado classificado pelo usuário; a IA escreve a orientação   |
+| `GET`  | `/chamados`  | Chamados do usuário; técnico e administrador veem a fila inteira       |
+| `GET`  | `/integracoes` | Estado da integração com a IA (só administrador; a chave nunca volta) |
 | `POST` | `/integracoes` | Salva a chave/modelo do Gemini pela tela — vence a variável de ambiente |
 | `POST` | `/integracoes/testar` | Chamada mínima ao Gemini para validar a chave configurada     |
 
@@ -46,10 +49,11 @@ Documentação interativa (Swagger) em `/docs`.
 
 Criadas automaticamente no primeiro boot (senha `puc123` para todas):
 
-| Login         | Perfil       | O que vê                                     |
-| ------------- | ------------ | -------------------------------------------- |
-| `ana.souza`   | Colaboradora | Assistente, os próprios chamados e histórico |
-| `carlos.lima` | Técnico de TI | O mesmo, mas com a fila inteira de chamados |
+| Login         | Perfil        | O que vê                                                |
+| ------------- | ------------- | -------------------------------------------------------- |
+| `ana.souza`   | Usuária       | Assistente, os próprios chamados e histórico              |
+| `carlos.lima` | Técnico de TI | O mesmo, mas com a fila inteira de chamados               |
+| `julia.alves` | Administradora | Tudo isso e a tela de Integrações (configuração da IA)  |
 
 ## Rodando localmente
 
@@ -90,7 +94,7 @@ pytest
 
 A chave do Gemini nunca aparece no código nem no histórico de commits. Ela entra por um de dois
 caminhos: a variável de ambiente `GEMINI_API_KEY` (arquivo `.env` local, ignorado pelo git, ou o
-painel do Render em produção) **ou** a tela de Integrações do portal (perfil técnico), que grava
+painel do Render em produção) **ou** a tela de Integrações do portal (só o administrador), que grava
 no banco e tem prioridade — o mesmo padrão de precedência de sistemas corporativos. A chave salva
 nunca volta para o navegador; a tela mostra só o estado. Veja o [.env.example](.env.example).
 
