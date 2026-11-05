@@ -3,49 +3,76 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PUCHUB — Assistente de TI</title>
+    <title>PUCHUB — Portal de TI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header class="topo">
-      <div class="marca">
-        <span class="logo">PUC<span class="logo-destaque">HUB</span></span>
-        <span class="subtitulo">Portal de TI · Assistente Virtual</span>
-      </div>
-      <span class="pilula">IA Generativa · Google Gemini</span>
-    </header>
-
-    <main class="cartao">
-      <section id="conversa" class="conversa" aria-live="polite">
-        <div class="balao assistente">
-          <p>
-            Oi! Sou a assistente virtual de TI do PUCHUB. Me conte sua dúvida de tecnologia —
-            computador, impressora, rede, e-mail, senhas — e eu respondo por aqui. 😊
-          </p>
+    <div class="app">
+      <!-- Barra lateral: a marca em cima, o menu no meio, o status da API embaixo. -->
+      <aside class="sidebar">
+        <div class="marca">
+          <span class="marca-logo">PUC<em>HUB</em></span>
+          <span class="marca-sub">Portal de TI</span>
         </div>
-      </section>
 
-      <p id="mensagem-erro" class="erro escondido"></p>
+        <nav class="menu" id="menu">
+          <button class="menu-item ativo" data-view="assistente" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z" />
+            </svg>
+            Assistente Virtual
+          </button>
+        </nav>
 
-      <form id="form-pergunta" class="entrada">
-        <input
-          id="pergunta"
-          name="pergunta"
-          type="text"
-          placeholder="Digite sua pergunta de TI… (ex.: minha impressora não imprime)"
-          minlength="5"
-          maxlength="1000"
-          autocomplete="off"
-          required
-        />
-        <button id="botao-enviar" type="submit">Perguntar</button>
-      </form>
-    </main>
+        <div class="sidebar-rodape">
+          <span class="status"><span id="status-dot" class="dot"></span><span id="status-texto">verificando a API…</span></span>
+          <span class="credito">Desafio DevOps &amp; IA · PUCPR</span>
+        </div>
+      </aside>
 
-    <footer class="rodape">
-      Projeto acadêmico — Desafio da Trilha de DevOps e IA Generativa (PUCPR) ·
-      <a href="/docs">documentação da API</a>
-    </footer>
+      <!-- Área principal: cabeçalho da página + a tela ativa. -->
+      <div class="principal">
+        <header class="topo">
+          <h1 id="titulo-pagina">Assistente Virtual</h1>
+          <span class="pilula-ia">IA Generativa · Google Gemini</span>
+        </header>
+
+        <main class="conteudo">
+          <section id="view-assistente" class="view cartao">
+            <div id="conversa" class="conversa" aria-live="polite">
+              <div class="balao assistente">
+                <p>
+                  Oi! Sou a assistente virtual de TI do PUCHUB. Me conte sua dúvida de tecnologia —
+                  computador, impressora, rede, e-mail, senhas — e eu respondo por aqui.
+                </p>
+              </div>
+            </div>
+
+            <p id="mensagem-erro" class="erro escondido"></p>
+
+            <form id="form-pergunta" class="entrada">
+              <input
+                id="pergunta"
+                name="pergunta"
+                type="text"
+                placeholder="Digite sua pergunta de TI… (ex.: minha impressora não imprime)"
+                minlength="5"
+                maxlength="1000"
+                autocomplete="off"
+                required
+              />
+              <button id="botao-enviar" type="submit">Perguntar</button>
+            </form>
+          </section>
+        </main>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

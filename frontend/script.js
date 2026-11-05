@@ -5,6 +5,24 @@ const formulario = document.getElementById("form-pergunta");
 const campoPergunta = document.getElementById("pergunta");
 const botaoEnviar = document.getElementById("botao-enviar");
 const mensagemErro = document.getElementById("mensagem-erro");
+const statusDot = document.getElementById("status-dot");
+const statusTexto = document.getElementById("status-texto");
+
+/* ---------- Status da API na barra lateral ---------- */
+
+async function verificarSaude() {
+  try {
+    const resposta = await fetch("/saude");
+    if (!resposta.ok) throw new Error();
+    statusDot.className = "dot ok";
+    statusTexto.textContent = "API no ar";
+  } catch {
+    statusDot.className = "dot erro";
+    statusTexto.textContent = "API fora do ar";
+  }
+}
+
+/* ---------- Assistente (chat) ---------- */
 
 function adicionarBalao(texto, tipo, categoria) {
   const balao = document.createElement("div");
@@ -17,7 +35,7 @@ function adicionarBalao(texto, tipo, categoria) {
   if (categoria) {
     const etiqueta = document.createElement("span");
     etiqueta.className = "categoria";
-    etiqueta.textContent = "📂 " + categoria;
+    etiqueta.textContent = categoria;
     balao.appendChild(etiqueta);
   }
 
@@ -27,7 +45,7 @@ function adicionarBalao(texto, tipo, categoria) {
 }
 
 // Carrega o histórico salvo no servidor, para a conversa continuar de onde parou.
-async function carregarHistorico() {
+async function carregarConversa() {
   const resposta = await fetch("/historico");
   if (!resposta.ok) return;
   const itens = await resposta.json();
@@ -75,4 +93,5 @@ formulario.addEventListener("submit", async (evento) => {
   }
 });
 
-carregarHistorico();
+verificarSaude();
+carregarConversa();
