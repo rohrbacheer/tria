@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PUCHUB — Portal de TI</title>
+    <title>Tria</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -15,30 +15,28 @@
   <body>
     <!-- Tela de login: aparece sozinha enquanto não há sessão. -->
     <div id="tela-login" class="tela-login">
-      <div class="login-cartao">
-        <div class="login-marca">
-          <span class="marca-logo">PUC<em>HUB</em></span>
-          <p class="login-tagline">Portal de serviços de TI</p>
-          <p class="login-descricao">
-            Abra chamados, acompanhe sua fila e tire dúvidas com a assistente virtual —
-            com respostas de IA Generativa na tela.
-          </p>
-          <span class="pilula-ia clara">IA Generativa · Google Gemini</span>
-        </div>
+      <div class="login-coluna">
+        <svg class="marca-simbolo" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="12" fill="#1E7D52"></rect><path d="M12 16h20M12 22h13M12 28h8" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"></path></svg>
+        <span class="login-wordmark">tria</span>
+        <p class="login-tagline">Assistente inteligente de classificação de solicitações</p>
+
         <form id="form-login" class="login-form">
-          <h2>Entrar</h2>
-          <label for="campo-login">Usuário</label>
-          <input id="campo-login" name="login" type="text" autocomplete="username" required minlength="3" />
-          <label for="campo-senha">Senha</label>
-          <input id="campo-senha" name="senha" type="password" autocomplete="current-password" required minlength="3" />
+          <div class="campo">
+            <label for="campo-login">Usuário</label>
+            <input id="campo-login" name="login" type="text" placeholder="nome.sobrenome" autocomplete="username" required minlength="3" />
+          </div>
+          <div class="campo">
+            <label for="campo-senha">Senha</label>
+            <input id="campo-senha" name="senha" type="password" autocomplete="current-password" required minlength="3" />
+          </div>
           <p id="login-erro" class="erro escondido"></p>
-          <button type="submit">Entrar no portal</button>
-          <p class="login-dica">
-            Contas de demonstração (senha <code>puc123</code>):<br />
-            <code>ana.souza</code> — usuária · <code>carlos.lima</code> — técnico ·
-            <code>julia.alves</code> — administradora
-          </p>
+          <button class="botao" type="submit">Entrar</button>
         </form>
+
+        <p class="login-dica">
+          Para testar, entre com <code>ana.souza</code>, <code>carlos.lima</code> ou
+          <code>julia.alves</code>.<br />A senha das três contas é <code>puc123</code>.
+        </p>
       </div>
     </div>
 
@@ -46,115 +44,97 @@
     <div id="app" class="app escondido">
       <aside class="sidebar">
         <div class="marca">
-          <span class="marca-logo">PUC<em>HUB</em></span>
-          <span class="marca-sub">Portal de TI</span>
+          <svg width="28" height="28" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="12" fill="#1E7D52"></rect><path d="M12 16h20M12 22h13M12 28h8" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"></path></svg>
+          <span>tria</span>
         </div>
 
         <nav class="menu" id="menu">
           <button class="menu-item ativo" data-view="assistente" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z" />
-            </svg>
-            Assistente Virtual
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z" /></svg>
+            Assistente
           </button>
           <button class="menu-item" data-view="abrir" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 8v8" />
-              <path d="M8 12h8" />
-            </svg>
-            Abrir chamado
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>
+            Nova solicitação
           </button>
-          <button class="menu-item" data-view="chamados" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 6h16" />
-              <path d="M4 12h16" />
-              <path d="M4 18h10" />
-            </svg>
-            Chamados
+          <button class="menu-item" data-view="solicitacoes" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
+            Solicitações
           </button>
           <button class="menu-item" data-view="historico" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 7v5l3 3" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
             Histórico
           </button>
           <button class="menu-item somente-admin" data-view="integracoes" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.5h4l.4-2.5a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9" /><circle cx="17" cy="7" r="2.5" /><path d="M20 17h-9" /><circle cx="7" cy="17" r="2.5" /></svg>
             Integrações
           </button>
           <button class="menu-item" data-view="sobre" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 11v5" />
-              <path d="M12 8h.01" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 8h.01" /></svg>
             Sobre o projeto
           </button>
         </nav>
 
         <div class="sidebar-rodape">
           <div class="usuario-box">
-            <span id="usuario-nome" class="usuario-nome"></span>
-            <span id="usuario-perfil" class="usuario-perfil"></span>
+            <span id="usuario-avatar" class="usuario-avatar"></span>
+            <div class="usuario-textos">
+              <span id="usuario-nome" class="usuario-nome"></span>
+              <span id="usuario-perfil" class="usuario-perfil"></span>
+            </div>
             <button id="botao-sair" class="botao-sair" type="button">Sair</button>
           </div>
           <span class="status"><span id="status-dot" class="dot"></span><span id="status-texto">verificando a API…</span></span>
-          <span class="credito">Desafio DevOps &amp; IA · PUCPR</span>
+          <span class="credito">Desafio DevOps e IA · PUCPR</span>
         </div>
       </aside>
 
       <div class="principal">
         <header class="topo">
-          <h1 id="titulo-pagina">Assistente Virtual</h1>
-          <span class="pilula-ia">IA Generativa · Google Gemini</span>
+          <h1 id="titulo-pagina">Assistente</h1>
         </header>
 
         <main class="conteudo">
           <section id="view-assistente" class="view cartao">
             <div id="conversa" class="conversa" aria-live="polite">
               <div id="saudacao" class="balao assistente">
-                <p>
-                  Oi! Sou a assistente virtual de TI do PUCHUB. Me conte sua dúvida de tecnologia —
-                  computador, impressora, rede, e-mail, senhas — e eu respondo por aqui.
-                </p>
+                <p>Oi, eu sou a Tria. Me conte o que está acontecendo com seu equipamento ou sistema que eu te oriento por aqui.</p>
               </div>
             </div>
 
-            <p id="mensagem-erro" class="erro escondido"></p>
+            <p id="mensagem-erro" class="erro conversa-erro escondido"></p>
 
             <form id="form-pergunta" class="entrada">
+              <label for="pergunta" class="escondido">Sua pergunta</label>
               <input
                 id="pergunta"
                 name="pergunta"
                 type="text"
-                placeholder="Digite sua pergunta de TI… (ex.: minha impressora não imprime)"
+                placeholder="Escreva sua dúvida de TI"
                 minlength="5"
                 maxlength="1000"
                 autocomplete="off"
                 required
               />
-              <button id="botao-enviar" type="submit">Perguntar</button>
+              <button id="botao-enviar" class="botao" type="submit">Enviar</button>
             </form>
           </section>
 
           <section id="view-abrir" class="view escondido">
-            <div class="cartao form-chamado-cartao">
-              <form id="form-chamado" class="form-chamado">
-                <label for="titulo">Título</label>
-                <input
-                  id="titulo"
-                  name="titulo"
-                  type="text"
-                  minlength="5"
-                  maxlength="100"
-                  placeholder="Resumo curto do problema (ex.: impressora não imprime)"
-                  required
-                />
+            <div class="cartao">
+              <form id="form-solicitacao" class="form-solicitacao">
+                <div class="campo">
+                  <label for="titulo">Título</label>
+                  <input
+                    id="titulo"
+                    name="titulo"
+                    type="text"
+                    minlength="5"
+                    maxlength="100"
+                    placeholder="Resumo curto do problema (ex.: impressora não imprime)"
+                    required
+                  />
+                </div>
 
                 <div class="linha-classificacao">
                   <div class="campo">
@@ -162,43 +142,45 @@
                     <select id="categoria" name="categoria" required></select>
                   </div>
                   <div class="campo">
-                    <label for="prioridade">Prioridade</label>
-                    <select id="prioridade" name="prioridade" required></select>
+                    <span class="rotulo">Prioridade</span>
+                    <div id="prioridades" class="segmentos" role="group" aria-label="Prioridade"></div>
                   </div>
                 </div>
 
-                <label for="descricao">Descreva o problema</label>
-                <textarea
-                  id="descricao"
-                  name="descricao"
-                  rows="5"
-                  minlength="10"
-                  maxlength="2000"
-                  placeholder="Conte o que está acontecendo: qual equipamento ou sistema, desde quando, e a mensagem de erro se houver."
-                  required
-                ></textarea>
-                <p id="chamado-erro" class="erro escondido"></p>
-                <button id="botao-abrir" type="submit">Abrir chamado</button>
+                <div class="campo">
+                  <label for="descricao">Descrição</label>
+                  <textarea
+                    id="descricao"
+                    name="descricao"
+                    rows="5"
+                    minlength="10"
+                    maxlength="2000"
+                    placeholder="Conte o que está acontecendo: qual equipamento ou sistema, desde quando, e a mensagem de erro se houver."
+                    required
+                  ></textarea>
+                </div>
+                <p id="solicitacao-erro" class="erro escondido"></p>
+                <button id="botao-abrir" class="botao" type="submit">Abrir solicitação</button>
               </form>
             </div>
 
-            <div id="chamado-resultado" class="cartao resultado escondido">
+            <div id="solicitacao-resultado" class="cartao resultado escondido">
               <h2 id="resultado-protocolo"></h2>
               <div class="resultado-pills">
                 <span id="resultado-categoria" class="pill"></span>
                 <span id="resultado-prioridade" class="pill"></span>
               </div>
-              <p class="resultado-legenda">Orientação da IA enquanto a equipe não atende:</p>
+              <p class="resultado-legenda">Enquanto a equipe não chega, a Tria sugere:</p>
               <p id="resultado-orientacao" class="resultado-orientacao"></p>
             </div>
           </section>
 
-          <section id="view-chamados" class="view cartao escondido">
+          <section id="view-solicitacoes" class="view cartao escondido">
             <div class="tabela-area">
-              <table id="tabela-chamados" class="tabela">
+              <table id="tabela-solicitacoes" class="tabela">
                 <thead>
                   <tr>
-                    <th>#</th>
+                    <th>Nº</th>
                     <th class="col-solicitante">Solicitante</th>
                     <th>Título</th>
                     <th>Categoria</th>
@@ -207,9 +189,9 @@
                     <th>Quando</th>
                   </tr>
                 </thead>
-                <tbody id="chamados-linhas"></tbody>
+                <tbody id="solicitacoes-linhas"></tbody>
               </table>
-              <p id="chamados-vazio" class="vazio escondido">Nenhum chamado aberto ainda.</p>
+              <p id="solicitacoes-vazio" class="vazio escondido">Nenhuma solicitação aberta ainda.</p>
             </div>
           </section>
 
@@ -218,7 +200,7 @@
               <table class="tabela">
                 <thead>
                   <tr>
-                    <th>#</th>
+                    <th>Nº</th>
                     <th>Pergunta</th>
                     <th>Categoria</th>
                     <th>Quando</th>
@@ -232,33 +214,37 @@
 
           <section id="view-integracoes" class="view escondido">
             <div class="cartao bloco-config">
-              <h2>Integração com a IA (Google Gemini)</h2>
+              <h2>Google Gemini</h2>
+              <p id="integracao-status" class="status-integracao"></p>
               <p class="config-descricao">
-                A chave salva aqui fica no banco e <strong>tem prioridade</strong> sobre a variável
-                de ambiente <code>GEMINI_API_KEY</code>. Ela nunca volta para o navegador — a tela
-                mostra apenas se está configurada. Gere a sua no
+                A chave salva aqui fica guardada no servidor e vale sobre a variável de ambiente
+                <code>GEMINI_API_KEY</code>. Depois de salva ela não aparece de novo, a tela mostra
+                apenas o estado da conexão. Gere a sua no
                 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
               </p>
-              <p id="integracao-status" class="status-integracao"></p>
 
               <form id="form-integracao" class="form-config">
-                <label for="campo-chave">Chave da API</label>
-                <input
-                  id="campo-chave"
-                  type="password"
-                  placeholder="Cole aqui a chave do Google AI Studio"
-                  minlength="10"
-                  maxlength="200"
-                  autocomplete="off"
-                  required
-                />
-                <label for="campo-modelo">Modelo (opcional)</label>
-                <input id="campo-modelo" type="text" placeholder="gemini-2.5-flash" maxlength="100" />
+                <div class="campo">
+                  <label for="campo-chave">Chave da API</label>
+                  <input
+                    id="campo-chave"
+                    type="password"
+                    placeholder="Cole aqui a chave do Google AI Studio"
+                    minlength="10"
+                    maxlength="200"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+                <div class="campo">
+                  <label for="campo-modelo">Modelo (opcional)</label>
+                  <input id="campo-modelo" type="text" placeholder="gemini-2.5-flash" maxlength="100" />
+                </div>
                 <p id="integracao-erro" class="erro escondido"></p>
                 <p id="integracao-ok" class="sucesso escondido"></p>
                 <div class="config-botoes">
-                  <button id="botao-salvar-integracao" type="submit">Salvar configuração</button>
-                  <button id="botao-testar" class="secundario" type="button">Testar conexão</button>
+                  <button id="botao-salvar-integracao" class="botao" type="submit">Salvar configuração</button>
+                  <button id="botao-testar" class="botao secundario" type="button">Testar conexão</button>
                 </div>
               </form>
             </div>
@@ -269,15 +255,17 @@
               <div class="cartao bloco-sobre">
                 <h2>O que é</h2>
                 <p>
-                  O PUCHUB é um portal de TI fictício com uma assistente virtual de IA Generativa:
-                  você pergunta, o Google Gemini responde e ainda classifica a categoria da dúvida.
-                  Projeto individual do Desafio da Trilha de DevOps e IA Generativa (PUCPR).
+                  A Tria é uma assistente inteligente de classificação de solicitações de TI.
+                  Você pergunta e o Google Gemini responde na tela, classificando a categoria da
+                  dúvida. Nas solicitações manuais, você classifica e a Tria escreve a primeira
+                  orientação. Projeto individual do Desafio da Trilha de DevOps e IA Generativa
+                  (PUCPR).
                 </p>
               </div>
               <div class="cartao bloco-sobre">
                 <h2>Stack</h2>
                 <p>
-                  Backend em FastAPI (Python 3.12) com saída estruturada do Gemini e histórico em
+                  Backend em FastAPI (Python 3.12) com saída estruturada do Gemini e dados em
                   SQLite. Frontend em HTML, CSS e JavaScript puros. Testes com pytest (IA mockada,
                   cobertura mínima de 70%), CI no GitHub Actions e deploy contínuo no Render.
                 </p>
@@ -285,14 +273,14 @@
               <div class="cartao bloco-sobre">
                 <h2>Endpoints da API</h2>
                 <ul>
-                  <li><code>GET /saude</code> — health check</li>
-                  <li><code>POST /login</code> — abre a sessão</li>
-                  <li><code>POST /perguntar</code> — envia a pergunta à IA</li>
-                  <li><code>GET /historico</code> — perguntas já respondidas</li>
-                  <li><code>GET /opcoes</code> — categorias e prioridades do chamado</li>
-                  <li><code>POST /chamados</code> — você classifica, a IA escreve a orientação</li>
-                  <li><code>GET /chamados</code> — seus chamados (técnico/admin veem a fila)</li>
-                  <li><code>GET/POST /integracoes</code> — configuração da IA (só administrador)</li>
+                  <li><code>GET /saude</code> health check</li>
+                  <li><code>POST /login</code> abre a sessão</li>
+                  <li><code>POST /perguntar</code> envia a pergunta à IA</li>
+                  <li><code>GET /historico</code> perguntas já respondidas</li>
+                  <li><code>GET /opcoes</code> categorias e prioridades</li>
+                  <li><code>POST /solicitacoes</code> você classifica, a IA orienta</li>
+                  <li><code>GET /solicitacoes</code> suas solicitações (técnico e admin veem a fila)</li>
+                  <li><code>GET/POST /integracoes</code> configuração da IA (só administrador)</li>
                 </ul>
                 <p><a href="/docs">Documentação interativa (Swagger) →</a></p>
               </div>
