@@ -53,6 +53,180 @@
   box-sizing: border-box;
 }
 
+/* ---------- Tela de login ---------- */
+
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.login-cartao {
+  display: flex;
+  width: min(840px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-1);
+  overflow: hidden;
+}
+
+.login-marca {
+  flex: 1 1 46%;
+  background: var(--marca);
+  color: #fff;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-marca .marca-logo {
+  font-size: 32px;
+}
+
+.login-tagline {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.login-descricao {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.75);
+  flex: 1;
+}
+
+.pilula-ia.clara {
+  align-self: flex-start;
+  color: #fff;
+  background: rgb(255 255 255 / 0.14);
+  border-color: rgb(255 255 255 / 0.35);
+}
+
+.login-form {
+  flex: 1 1 54%;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-form h2 {
+  margin: 0 0 10px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 20px;
+}
+
+.login-form label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mut);
+  margin-top: 8px;
+}
+
+.login-form input {
+  min-height: var(--h-controle);
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-controle);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+
+.login-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(111 29 51 / 0.14);
+}
+
+.login-form button {
+  margin-top: 16px;
+  min-height: var(--h-controle);
+  border: 0;
+  border-radius: var(--raio-controle);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background: var(--accent2);
+}
+
+.login-form .erro {
+  margin: 10px 0 0;
+}
+
+.login-dica {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--mut);
+}
+
+.login-dica code {
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+@media (max-width: 680px) {
+  .login-cartao {
+    flex-direction: column;
+  }
+}
+
+/* ---------- Usuário logado na barra lateral ---------- */
+
+.usuario-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: rgb(255 255 255 / 0.07);
+  border-radius: var(--raio-controle);
+}
+
+.usuario-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.usuario-perfil {
+  font-size: 11px;
+  color: rgb(255 255 255 / 0.6);
+}
+
+.botao-sair {
+  margin-top: 8px;
+  align-self: flex-start;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: transparent;
+  color: rgb(255 255 255 / 0.85);
+  font: inherit;
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: var(--raio-pill);
+  cursor: pointer;
+}
+
+.botao-sair:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
 body {
   margin: 0;
   min-height: 100vh;

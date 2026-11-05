@@ -13,8 +13,36 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="app">
-      <!-- Barra lateral: a marca em cima, o menu no meio, o status da API embaixo. -->
+    <!-- Tela de login: aparece sozinha enquanto não há sessão. -->
+    <div id="tela-login" class="tela-login">
+      <div class="login-cartao">
+        <div class="login-marca">
+          <span class="marca-logo">PUC<em>HUB</em></span>
+          <p class="login-tagline">Portal de serviços de TI</p>
+          <p class="login-descricao">
+            Abra chamados, acompanhe sua fila e tire dúvidas com a assistente virtual —
+            com respostas de IA Generativa na tela.
+          </p>
+          <span class="pilula-ia clara">IA Generativa · Google Gemini</span>
+        </div>
+        <form id="form-login" class="login-form">
+          <h2>Entrar</h2>
+          <label for="campo-login">Usuário</label>
+          <input id="campo-login" name="login" type="text" autocomplete="username" required minlength="3" />
+          <label for="campo-senha">Senha</label>
+          <input id="campo-senha" name="senha" type="password" autocomplete="current-password" required minlength="3" />
+          <p id="login-erro" class="erro escondido"></p>
+          <button type="submit">Entrar no portal</button>
+          <p class="login-dica">
+            Contas de demonstração (senha <code>puc123</code>):<br />
+            <code>ana.souza</code> — colaboradora · <code>carlos.lima</code> — técnico de TI
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Portal: só aparece com sessão aberta. -->
+    <div id="app" class="app escondido">
       <aside class="sidebar">
         <div class="marca">
           <span class="marca-logo">PUC<em>HUB</em></span>
@@ -46,12 +74,16 @@
         </nav>
 
         <div class="sidebar-rodape">
+          <div class="usuario-box">
+            <span id="usuario-nome" class="usuario-nome"></span>
+            <span id="usuario-perfil" class="usuario-perfil"></span>
+            <button id="botao-sair" class="botao-sair" type="button">Sair</button>
+          </div>
           <span class="status"><span id="status-dot" class="dot"></span><span id="status-texto">verificando a API…</span></span>
           <span class="credito">Desafio DevOps &amp; IA · PUCPR</span>
         </div>
       </aside>
 
-      <!-- Área principal: cabeçalho da página + a tela ativa. -->
       <div class="principal">
         <header class="topo">
           <h1 id="titulo-pagina">Assistente Virtual</h1>
@@ -61,7 +93,7 @@
         <main class="conteudo">
           <section id="view-assistente" class="view cartao">
             <div id="conversa" class="conversa" aria-live="polite">
-              <div class="balao assistente">
+              <div id="saudacao" class="balao assistente">
                 <p>
                   Oi! Sou a assistente virtual de TI do PUCHUB. Me conte sua dúvida de tecnologia —
                   computador, impressora, rede, e-mail, senhas — e eu respondo por aqui.
@@ -125,6 +157,7 @@
                 <h2>Endpoints da API</h2>
                 <ul>
                   <li><code>GET /saude</code> — health check</li>
+                  <li><code>POST /login</code> — abre a sessão</li>
                   <li><code>POST /perguntar</code> — envia a pergunta à IA</li>
                   <li><code>GET /historico</code> — perguntas já respondidas</li>
                 </ul>
