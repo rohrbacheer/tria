@@ -11,7 +11,7 @@ administrador configura a integração com a IA pela tela. A ideia nasceu do **C
 interno de TI que desenvolvo no trabalho, aqui recriada do zero como uma mini-aplicação pública
 para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
 
-🌐 **Aplicação em produção:** `<URL_DO_RENDER_AQUI>`
+🌐 **Aplicação em produção:** https://tria-bqc2.onrender.com
 
 ## Como funciona
 
