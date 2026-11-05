@@ -1,4 +1,4 @@
-﻿"""API do PUCHUB — portal de TI com assistente virtual de IA Generativa."""
+﻿"""API da Tria, assistente inteligente de classificação de solicitações."""
 
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -8,14 +8,14 @@ from fastapi.staticfiles import StaticFiles
 
 from app import db, ia
 from app.schemas import (
-    ChamadoEntrada,
-    ChamadoSaida,
     IntegracaoEntrada,
     IntegracaoSaida,
     LoginEntrada,
     LoginSaida,
     PerguntaEntrada,
     RespostaSaida,
+    SolicitacaoEntrada,
+    SolicitacaoSaida,
 )
 
 
@@ -26,9 +26,9 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="PUCHUB",
-    description="Portal de TI com assistente virtual: o usuário pergunta e a IA Generativa (Google Gemini) responde.",
-    version="2.0.0",
+    title="Tria",
+    description="Assistente inteligente de classificação de solicitações: o usuário pergunta e a IA Generativa (Google Gemini) responde.",
+    version="3.0.0",
     lifespan=lifespan,
 )
 
@@ -84,15 +84,15 @@ def historico(usuario: dict = Depends(usuario_atual)) -> list[dict]:
     return db.listar_historico(usuario["id"])
 
 
-@app.get("/opcoes", tags=["Chamados"])
+@app.get("/opcoes", tags=["Solicitações"])
 def opcoes(_usuario: dict = Depends(usuario_atual)) -> dict:
-    """Opções de classificação do chamado manual (as mesmas listas que a IA conhece)."""
+    """Opções de classificação da solicitação manual (as mesmas listas que a IA conhece)."""
     return {"categorias": ia.CATEGORIAS, "prioridades": ia.PRIORIDADES}
 
 
-@app.post("/chamados", response_model=ChamadoSaida, status_code=201, tags=["Chamados"])
-def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual)) -> dict:
-    """Abre um chamado classificado pelo próprio usuário; a IA escreve a primeira orientação."""
+@app.post("/solicitacoes", response_model=SolicitacaoSaida, status_code=201, tags=["Solicitações"])
+def abrir_solicitacao(entrada: SolicitacaoEntrada, usuario: dict = Depends(usuario_atual)) -> dict:
+    """Abre uma solicitação classificada pelo próprio usuário; a IA escreve a primeira orientação."""
     try:
         orientacao = ia.gerar_orientacao(
             entrada.titulo, entrada.descricao, entrada.categoria, entrada.prioridade
@@ -102,15 +102,15 @@ def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual
             status_code=502,
             detail="Não foi possível consultar a IA no momento. Tente novamente em instantes.",
         ) from erro
-    return db.inserir_chamado(
+    return db.inserir_solicitacao(
         usuario["id"], entrada.titulo, entrada.descricao, entrada.categoria, entrada.prioridade, orientacao
     )
 
 
-@app.get("/chamados", response_model=list[ChamadoSaida], tags=["Chamados"])
-def listar_chamados(usuario: dict = Depends(usuario_atual)) -> list[dict]:
-    """Lista os chamados: técnico e administrador veem a fila inteira, o usuário só os próprios."""
-    return db.listar_chamados(usuario)
+@app.get("/solicitacoes", response_model=list[SolicitacaoSaida], tags=["Solicitações"])
+def listar_solicitacoes(usuario: dict = Depends(usuario_atual)) -> list[dict]:
+    """Lista as solicitações: técnico e administrador veem a fila inteira, o usuário só as próprias."""
+    return db.listar_solicitacoes(usuario)
 
 
 @app.get("/integracoes", response_model=IntegracaoSaida, tags=["Integrações"])

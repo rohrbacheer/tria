@@ -1,4 +1,4 @@
-"""Persistência em SQLite (biblioteca padrão): usuários, sessões e o histórico do assistente."""
+"""Persistência em SQLite (biblioteca padrão): usuários, sessões, perguntas e solicitações."""
 
 import hashlib
 import os
@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Contas de demonstração criadas no primeiro boot (senha padrão: puc123).
-# Perfis: USUARIO abre chamados e usa o assistente; TECNICO também vê a fila inteira;
+# Perfis: USUARIO abre solicitações e usa a assistente; TECNICO também vê a fila inteira;
 # ADMIN é o único que configura as integrações.
-# Didático: SHA-256 simples para a senha — num sistema real, bcrypt/argon2 com salt por usuário.
+# Didático: SHA-256 simples para a senha. Num sistema real, bcrypt/argon2 com salt por usuário.
 USUARIOS_DEMO = [
     ("ana.souza", "Ana Souza", "puc123", "USUARIO"),
     ("carlos.lima", "Carlos Lima", "puc123", "TECNICO"),
@@ -20,7 +20,7 @@ USUARIOS_DEMO = [
 
 def _caminho_banco() -> str:
     """Caminho do arquivo do banco; configurável via DB_PATH (útil nos testes)."""
-    return os.environ.get("DB_PATH", str(Path(__file__).resolve().parents[1] / "puchub.db"))
+    return os.environ.get("DB_PATH", str(Path(__file__).resolve().parents[1] / "tria.db"))
 
 
 def _conectar() -> sqlite3.Connection:
@@ -82,7 +82,7 @@ def init_db() -> None:
         )
         conexao.execute(
             """
-            CREATE TABLE IF NOT EXISTS chamados (
+            CREATE TABLE IF NOT EXISTS solicitacoes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
                 titulo TEXT NOT NULL,
@@ -183,16 +183,16 @@ def listar_historico(usuario_id: int) -> list[dict]:
     return [dict(linha) for linha in linhas]
 
 
-def inserir_chamado(
+def inserir_solicitacao(
     usuario_id: int, titulo: str, descricao: str, categoria: str, prioridade: str, orientacao: str
 ) -> dict:
-    """Grava um chamado classificado pelo usuário (com a orientação da IA) e devolve o registro."""
+    """Grava uma solicitação classificada pelo usuário (com a orientação da IA) e devolve o registro."""
     criado_em = _agora()
     with _conectar() as conexao:
         cursor = conexao.execute(
             """
-            INSERT INTO chamados (usuario_id, titulo, descricao, categoria, prioridade, orientacao, status, criado_em)
-            VALUES (?, ?, ?, ?, ?, ?, 'Aberto', ?)
+            INSERT INTO solicitacoes (usuario_id, titulo, descricao, categoria, prioridade, orientacao, status, criado_em)
+            VALUES (?, ?, ?, ?, ?, ?, 'Aberta', ?)
             """,
             (usuario_id, titulo, descricao, categoria, prioridade, orientacao, criado_em),
         )
@@ -208,26 +208,26 @@ def inserir_chamado(
         "categoria": categoria,
         "prioridade": prioridade,
         "orientacao": orientacao,
-        "status": "Aberto",
+        "status": "Aberta",
         "criado_em": criado_em,
     }
 
 
-def listar_chamados(usuario: dict) -> list[dict]:
-    """Chamados do mais recente para o mais antigo: técnico e administrador veem a fila
-    inteira, o usuário comum vê somente os próprios."""
+def listar_solicitacoes(usuario: dict) -> list[dict]:
+    """Solicitações da mais recente para a mais antiga: técnico e administrador veem a fila
+    inteira, o usuário comum vê somente as próprias."""
     consulta = """
-        SELECT c.id, u.nome AS solicitante, c.titulo, c.descricao, c.categoria, c.prioridade,
-               c.orientacao, c.status, c.criado_em
-        FROM chamados c JOIN usuarios u ON u.id = c.usuario_id
+        SELECT s.id, u.nome AS solicitante, s.titulo, s.descricao, s.categoria, s.prioridade,
+               s.orientacao, s.status, s.criado_em
+        FROM solicitacoes s JOIN usuarios u ON u.id = s.usuario_id
         {filtro}
-        ORDER BY c.id DESC
+        ORDER BY s.id DESC
     """
     with _conectar() as conexao:
         if usuario["perfil"] in ("TECNICO", "ADMIN"):
             linhas = conexao.execute(consulta.format(filtro="")).fetchall()
         else:
             linhas = conexao.execute(
-                consulta.format(filtro="WHERE c.usuario_id = ?"), (usuario["id"],)
+                consulta.format(filtro="WHERE s.usuario_id = ?"), (usuario["id"],)
             ).fetchall()
     return [dict(linha) for linha in linhas]

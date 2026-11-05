@@ -21,7 +21,7 @@ class LoginSaida(BaseModel):
 
 
 class PerguntaEntrada(BaseModel):
-    """Pergunta que o usuário envia para a assistente virtual."""
+    """Pergunta que o usuário envia para a Tria."""
 
     pergunta: str = Field(
         min_length=5,
@@ -41,7 +41,7 @@ class RespostaSaida(BaseModel):
 
 
 class IntegracaoEntrada(BaseModel):
-    """Configuração da IA enviada pela tela de Integrações (só o perfil técnico)."""
+    """Configuração da IA enviada pela tela de Integrações (só o administrador)."""
 
     gemini_api_key: str = Field(min_length=10, max_length=200)
     modelo: str | None = Field(default=None, max_length=100, examples=["gemini-2.5-flash"])
@@ -55,8 +55,8 @@ class IntegracaoSaida(BaseModel):
     modelo: str
 
 
-class ChamadoEntrada(BaseModel):
-    """Chamado aberto manualmente: o próprio usuário classifica antes de enviar."""
+class SolicitacaoEntrada(BaseModel):
+    """Solicitação aberta manualmente: o próprio usuário classifica antes de enviar."""
 
     titulo: str = Field(min_length=5, max_length=100, examples=["Impressora não imprime"])
     descricao: str = Field(
@@ -82,8 +82,8 @@ class ChamadoEntrada(BaseModel):
         return valor
 
 
-class ChamadoSaida(BaseModel):
-    """Chamado completo, com a orientação inicial escrita pela IA."""
+class SolicitacaoSaida(BaseModel):
+    """Solicitação completa, com a orientação inicial escrita pela IA."""
 
     id: int
     solicitante: str

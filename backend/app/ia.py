@@ -1,4 +1,4 @@
-"""Integração com a IA Generativa (Google Gemini) — a assistente virtual do PUCHUB."""
+"""Integração com a IA Generativa (Google Gemini). A Tria fala com o Gemini por aqui."""
 
 import json
 import os
@@ -9,17 +9,18 @@ from pydantic import BaseModel
 
 from app import db
 
-CATEGORIAS = ["Hardware", "Software", "Rede", "Acesso e Senhas", "E-mail", "Outro"]
+CATEGORIAS = ["Hardware", "Software", "Rede", "Acesso e senhas", "E-mail", "Outro"]
 
-PROMPT_SISTEMA = f"""Você é a assistente virtual de TI do PUCHUB, o portal de serviços de TI de uma
-empresa fictícia. Sua função é responder dúvidas de tecnologia do dia a dia de trabalho:
-computador, impressora, rede, internet, sistemas, e-mail, senhas e acessos.
+PROMPT_SISTEMA = f"""Você é a Tria, assistente virtual de TI de uma empresa fictícia. Sua função é
+responder dúvidas de tecnologia do dia a dia de trabalho: computador, impressora, rede, internet,
+sistemas, e-mail, senhas e acessos.
 
 Como responder:
-- Seja cordial, objetiva e responda sempre em português brasileiro. Trate o colaborador por você.
-- "resposta" deve ter de 2 a 6 frases, com passos práticos que o colaborador consegue seguir
-  sozinho. Se o problema normalmente exige um técnico, dê os primeiros passos e oriente a
-  procurar a equipe de suporte.
+- Seja cordial, objetiva e responda sempre em português brasileiro. Trate a pessoa por você.
+- Fale como uma colega de equipe: frases curtas e diretas, sem jargão e sem travessões.
+- "resposta" deve ter de 2 a 6 frases, com passos práticos que a pessoa consegue seguir sozinha.
+  Se o problema normalmente exige um técnico, dê os primeiros passos e oriente a abrir uma
+  solicitação para a equipe.
 - Nunca invente detalhes sobre sistemas específicos da empresa; na dúvida, dê orientações gerais.
 - Se a pergunta não for sobre TI, explique em uma frase que você só responde dúvidas de
   tecnologia e classifique como "Outro".
@@ -73,7 +74,7 @@ def _criar_cliente() -> genai.Client:
 def responder_pergunta(pergunta: str) -> dict:
     """Envia a pergunta do usuário ao Gemini e devolve a resposta estruturada como dicionário.
 
-    Esta é a única função que fala com a IA — nos testes automatizados ela é
+    Esta é a única função que fala com a IA no assistente. Nos testes automatizados ela é
     substituída por um mock, para que nenhum teste dependa da API externa.
     """
     cliente = _criar_cliente()
@@ -99,23 +100,24 @@ def _parse_resposta(texto: str) -> dict:
     return resposta.model_dump()
 
 
-# ---------- Orientação inicial do chamado manual ----------
+# ---------- Orientação inicial da solicitação manual ----------
 
 PRIORIDADES = ["Baixa", "Média", "Alta"]
 
-PROMPT_ORIENTACAO = """Você é o analista de suporte de TI do PUCHUB. Um colaborador abriu um
-chamado e ele mesmo classificou título, categoria e prioridade. Escreva a primeira orientação:
-2 a 4 frases, em português, educadas e práticas, com os primeiros passos que ele pode tentar
-sozinho enquanto aguarda o atendimento. Não invente detalhes que não estão no chamado.
-Responda somente com o texto da orientação, sem saudação e sem assinatura."""
+PROMPT_ORIENTACAO = """Você é a Tria, assistente de TI. Uma pessoa abriu uma solicitação de
+suporte e ela mesma classificou título, categoria e prioridade. Escreva a primeira orientação:
+2 a 4 frases, em português, educadas e práticas, com os primeiros passos que ela pode tentar
+sozinha enquanto aguarda o atendimento. Fale como uma colega de equipe, sem jargão e sem
+travessões. Não invente detalhes que não estão na solicitação. Responda somente com o texto da
+orientação, sem saudação e sem assinatura."""
 
 
 def gerar_orientacao(titulo: str, descricao: str, categoria: str, prioridade: str) -> str:
-    """Pede ao Gemini a primeira orientação para um chamado já classificado pelo usuário.
+    """Pede ao Gemini a primeira orientação para uma solicitação já classificada pelo usuário.
 
     Assim como responder_pergunta, é substituída por um mock nos testes.
     """
-    chamado = (
+    solicitacao = (
         f"Título: {titulo}\n"
         f"Categoria: {categoria}\n"
         f"Prioridade: {prioridade}\n"
@@ -124,7 +126,7 @@ def gerar_orientacao(titulo: str, descricao: str, categoria: str, prioridade: st
     cliente = _criar_cliente()
     resposta = cliente.models.generate_content(
         model=_modelo(),
-        contents=chamado,
+        contents=solicitacao,
         config=types.GenerateContentConfig(
             system_instruction=PROMPT_ORIENTACAO,
             temperature=0.3,
