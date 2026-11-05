@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Segredos — a chave da IA fica só no .env local e no painel do Render
+.env
+!.env.example
+
+# Banco de dados local
+*.db
+
+# Relatórios de teste e cobertura
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
