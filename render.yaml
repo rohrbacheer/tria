@@ -2,7 +2,7 @@
 # A chave GEMINI_API_KEY é configurada no painel do Render (sync: false) — nunca no código.
 services:
   - type: web
-    name: puchub
+    name: tria
     runtime: python
     plan: free
     buildCommand: pip install -r backend/requirements.txt
