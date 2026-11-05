@@ -108,9 +108,18 @@ document.getElementById("botao-sair").addEventListener("click", () => mostrarLog
 
 const TITULOS = {
   assistente: "Assistente Virtual",
+  abrir: "Abrir chamado",
+  chamados: "Chamados",
   historico: "Histórico de perguntas",
   sobre: "Sobre o projeto",
 };
+
+function tituloDaView(view) {
+  if (view === "chamados") {
+    return sessao.perfil === "TECNICO" ? "Fila de chamados" : "Meus chamados";
+  }
+  return TITULOS[view];
+}
 
 document.querySelectorAll(".menu-item").forEach((botao) => {
   botao.addEventListener("click", () => {
@@ -120,11 +129,124 @@ document.querySelectorAll(".menu-item").forEach((botao) => {
     const view = botao.dataset.view;
     document.querySelectorAll(".view").forEach((v) => v.classList.add("escondido"));
     document.getElementById("view-" + view).classList.remove("escondido");
-    document.getElementById("titulo-pagina").textContent = TITULOS[view];
+    document.getElementById("titulo-pagina").textContent = tituloDaView(view);
 
     if (view === "historico") carregarTabelaHistorico();
+    if (view === "chamados") carregarChamados();
   });
 });
+
+/* ---------- Abrir chamado ---------- */
+
+const formChamado = document.getElementById("form-chamado");
+const botaoAbrir = document.getElementById("botao-abrir");
+const chamadoErro = document.getElementById("chamado-erro");
+const chamadoResultado = document.getElementById("chamado-resultado");
+
+function classeDePrioridade(prioridade) {
+  return "pill pill-" + prioridade.toLowerCase().replace("é", "e");
+}
+
+formChamado.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  chamadoErro.classList.add("escondido");
+  chamadoResultado.classList.add("escondido");
+  botaoAbrir.disabled = true;
+  botaoAbrir.textContent = "A IA está fazendo a triagem…";
+
+  try {
+    const resposta = await fetchAuth("/chamados", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ descricao: document.getElementById("descricao").value.trim() }),
+    });
+
+    if (!resposta.ok) {
+      const corpo = await resposta.json().catch(() => ({}));
+      throw new Error(corpo.detail || "Não foi possível abrir o chamado. Tente novamente.");
+    }
+
+    const chamado = await resposta.json();
+    document.getElementById("resultado-protocolo").textContent =
+      "Chamado #" + chamado.id + " aberto";
+    document.getElementById("resultado-categoria").textContent = chamado.categoria;
+    const pillPrioridade = document.getElementById("resultado-prioridade");
+    pillPrioridade.textContent = "Prioridade " + chamado.prioridade;
+    pillPrioridade.className = classeDePrioridade(chamado.prioridade);
+    document.getElementById("resultado-orientacao").textContent = chamado.resposta_sugerida;
+    chamadoResultado.classList.remove("escondido");
+    formChamado.reset();
+  } catch (erro) {
+    chamadoErro.textContent = erro.message;
+    chamadoErro.classList.remove("escondido");
+  } finally {
+    botaoAbrir.disabled = false;
+    botaoAbrir.textContent = "Abrir chamado";
+  }
+});
+
+/* ---------- Chamados (tabela) ---------- */
+
+async function carregarChamados() {
+  // A coluna Solicitante só faz sentido para quem vê a fila inteira (técnico).
+  document
+    .getElementById("tabela-chamados")
+    .classList.toggle("sem-solicitante", sessao.perfil !== "TECNICO");
+
+  const resposta = await fetchAuth("/chamados");
+  if (!resposta.ok) return;
+  const chamados = await resposta.json();
+
+  const corpo = document.getElementById("chamados-linhas");
+  const vazio = document.getElementById("chamados-vazio");
+  corpo.innerHTML = "";
+  vazio.classList.toggle("escondido", chamados.length > 0);
+
+  for (const chamado of chamados) {
+    const linha = document.createElement("tr");
+
+    const colunaId = document.createElement("td");
+    colunaId.textContent = "#" + chamado.id;
+
+    const colunaSolicitante = document.createElement("td");
+    colunaSolicitante.className = "col-solicitante";
+    colunaSolicitante.textContent = chamado.solicitante;
+
+    const colunaDescricao = document.createElement("td");
+    colunaDescricao.className = "col-pergunta";
+    colunaDescricao.textContent = chamado.descricao;
+
+    const colunaCategoria = document.createElement("td");
+    const pillCategoria = document.createElement("span");
+    pillCategoria.className = "pill";
+    pillCategoria.textContent = chamado.categoria;
+    colunaCategoria.appendChild(pillCategoria);
+
+    const colunaPrioridade = document.createElement("td");
+    const pillPrioridade = document.createElement("span");
+    pillPrioridade.className = classeDePrioridade(chamado.prioridade);
+    pillPrioridade.textContent = chamado.prioridade;
+    colunaPrioridade.appendChild(pillPrioridade);
+
+    const colunaStatus = document.createElement("td");
+    colunaStatus.textContent = chamado.status;
+
+    const colunaData = document.createElement("td");
+    colunaData.className = "col-data";
+    colunaData.textContent = new Date(chamado.criado_em).toLocaleString("pt-BR");
+
+    linha.append(
+      colunaId,
+      colunaSolicitante,
+      colunaDescricao,
+      colunaCategoria,
+      colunaPrioridade,
+      colunaStatus,
+      colunaData
+    );
+    corpo.appendChild(linha);
+  }
+}
 
 /* ---------- Histórico (tabela) ---------- */
 

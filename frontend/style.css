@@ -17,6 +17,7 @@
   --on-accent: #ffffff;
 
   --ok: #177346;
+  --warn: #8a5a00;
   --bad: #b3362b;
 
   --menu: linear-gradient(180deg, #2a1016, #1c0a0f);
@@ -44,6 +45,10 @@
     --accent: #c2607c; /* bordô clareado: sobre fundo escuro, o tom fechado some */
     --accent2: #8a3952;
     --on-accent: #1c0a0f;
+
+    --ok: #45c98b;
+    --warn: #e0a63f;
+    --bad: #e4604f;
 
     --menu: linear-gradient(180deg, #17181a, #101113);
   }
@@ -586,6 +591,117 @@ body {
 .vazio {
   padding: 24px 10px;
   color: var(--mut);
+}
+
+/* Pills de prioridade: véu da cor de estado + texto na própria cor. */
+.pill-alta {
+  color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+}
+
+.pill-media {
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+}
+
+.pill-baixa {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+}
+
+/* Para o colaborador a coluna Solicitante some: é sempre ele mesmo. */
+.tabela.sem-solicitante .col-solicitante {
+  display: none;
+}
+
+/* ---------- Abrir chamado ---------- */
+
+.form-chamado-cartao {
+  padding: 20px;
+}
+
+.form-chamado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-chamado label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mut);
+}
+
+.form-chamado textarea {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-controle);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+  outline: none;
+}
+
+.form-chamado textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(111 29 51 / 0.14);
+}
+
+.form-chamado button {
+  align-self: flex-start;
+  min-height: var(--h-controle);
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--raio-controle);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-chamado button:hover {
+  background: var(--accent2);
+}
+
+.form-chamado button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.form-chamado .erro {
+  margin: 0;
+}
+
+.resultado {
+  margin-top: 16px;
+  padding: 20px;
+}
+
+.resultado h2 {
+  margin: 0 0 4px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 16px;
+  color: var(--ok);
+}
+
+.resultado-legenda {
+  margin: 10px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mut);
+}
+
+.resultado-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.resultado-orientacao {
+  margin: 0;
+  font-size: 14px;
 }
 
 /* ---------- Sobre ---------- */

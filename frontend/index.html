@@ -56,6 +56,22 @@
             </svg>
             Assistente Virtual
           </button>
+          <button class="menu-item" data-view="abrir" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+            </svg>
+            Abrir chamado
+          </button>
+          <button class="menu-item" data-view="chamados" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16" />
+              <path d="M4 12h16" />
+              <path d="M4 18h10" />
+            </svg>
+            Chamados
+          </button>
           <button class="menu-item" data-view="historico" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9" />
@@ -118,6 +134,56 @@
             </form>
           </section>
 
+          <section id="view-abrir" class="view escondido">
+            <div class="cartao form-chamado-cartao">
+              <form id="form-chamado" class="form-chamado">
+                <label for="descricao">Descreva o problema</label>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  rows="5"
+                  minlength="10"
+                  maxlength="2000"
+                  placeholder="Conte o que está acontecendo: qual equipamento ou sistema, desde quando, e a mensagem de erro se houver."
+                  required
+                ></textarea>
+                <p id="chamado-erro" class="erro escondido"></p>
+                <button id="botao-abrir" type="submit">Abrir chamado</button>
+              </form>
+            </div>
+
+            <div id="chamado-resultado" class="cartao resultado escondido">
+              <h2 id="resultado-protocolo"></h2>
+              <p class="resultado-legenda">Triagem feita pela IA:</p>
+              <div class="resultado-pills">
+                <span id="resultado-categoria" class="pill"></span>
+                <span id="resultado-prioridade" class="pill"></span>
+              </div>
+              <p class="resultado-legenda">Enquanto a equipe não atende, você pode tentar:</p>
+              <p id="resultado-orientacao" class="resultado-orientacao"></p>
+            </div>
+          </section>
+
+          <section id="view-chamados" class="view cartao escondido">
+            <div class="tabela-area">
+              <table id="tabela-chamados" class="tabela">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th class="col-solicitante">Solicitante</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Quando</th>
+                  </tr>
+                </thead>
+                <tbody id="chamados-linhas"></tbody>
+              </table>
+              <p id="chamados-vazio" class="vazio escondido">Nenhum chamado aberto ainda.</p>
+            </div>
+          </section>
+
           <section id="view-historico" class="view cartao escondido">
             <div class="tabela-area">
               <table class="tabela">
@@ -160,6 +226,8 @@
                   <li><code>POST /login</code> — abre a sessão</li>
                   <li><code>POST /perguntar</code> — envia a pergunta à IA</li>
                   <li><code>GET /historico</code> — perguntas já respondidas</li>
+                  <li><code>POST /chamados</code> — abre chamado com triagem da IA</li>
+                  <li><code>GET /chamados</code> — seus chamados (técnico vê a fila inteira)</li>
                 </ul>
                 <p><a href="/docs">Documentação interativa (Swagger) →</a></p>
               </div>
