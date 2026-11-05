@@ -1,4 +1,5 @@
-"""Fixtures compartilhadas: banco temporário e mock da IA (nenhum teste chama o Gemini real)."""
+"""Fixtures compartilhadas: banco temporário, sessões de login e mock da IA
+(nenhum teste chama o Gemini real)."""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -17,6 +18,24 @@ def cliente(tmp_path, monkeypatch):
     monkeypatch.setenv("DB_PATH", str(tmp_path / "teste.db"))
     with TestClient(app) as cliente_teste:
         yield cliente_teste
+
+
+def _login(cliente, login: str) -> dict:
+    resposta = cliente.post("/login", json={"login": login, "senha": "puc123"})
+    assert resposta.status_code == 200
+    return {"Authorization": "Bearer " + resposta.json()["token"]}
+
+
+@pytest.fixture()
+def auth(cliente):
+    """Cabeçalho de sessão da colaboradora de demonstração (ana.souza)."""
+    return _login(cliente, "ana.souza")
+
+
+@pytest.fixture()
+def auth_tecnico(cliente):
+    """Cabeçalho de sessão do técnico de demonstração (carlos.lima)."""
+    return _login(cliente, "carlos.lima")
 
 
 @pytest.fixture()
