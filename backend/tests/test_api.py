@@ -15,7 +15,7 @@ def test_login_valido_abre_sessao(cliente):
     corpo = resposta.json()
     assert corpo["token"]
     assert corpo["nome"] == "Ana Souza"
-    assert corpo["perfil"] == "COLABORADOR"
+    assert corpo["perfil"] == "USUARIO"
 
 
 def test_login_com_senha_errada_retorna_401(cliente):

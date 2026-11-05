@@ -41,6 +41,14 @@ def test_tecnico_ve_a_fila_inteira(cliente, auth, auth_tecnico, triagem_mockada)
     assert chamados[1]["solicitante"] == "Ana Souza"
 
 
+def test_admin_tambem_ve_a_fila_inteira(cliente, auth, auth_admin, triagem_mockada):
+    cliente.post("/chamados", json=CHAMADO_EXEMPLO, headers=auth)
+    resposta = cliente.get("/chamados", headers=auth_admin)
+    chamados = resposta.json()
+    assert len(chamados) == 1
+    assert chamados[0]["solicitante"] == "Ana Souza"
+
+
 def test_descricao_muito_curta_retorna_422(cliente, auth, triagem_mockada):
     resposta = cliente.post("/chamados", json={"descricao": "curta"}, headers=auth)
     assert resposta.status_code == 422

@@ -8,10 +8,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Contas de demonstração criadas no primeiro boot (senha padrão: puc123).
+# Perfis: USUARIO abre chamados e usa o assistente; TECNICO também vê a fila inteira;
+# ADMIN é o único que configura as integrações.
 # Didático: SHA-256 simples para a senha — num sistema real, bcrypt/argon2 com salt por usuário.
 USUARIOS_DEMO = [
-    ("ana.souza", "Ana Souza", "puc123", "COLABORADOR"),
+    ("ana.souza", "Ana Souza", "puc123", "USUARIO"),
     ("carlos.lima", "Carlos Lima", "puc123", "TECNICO"),
+    ("julia.alves", "Júlia Alves", "puc123", "ADMIN"),
 ]
 
 
@@ -214,8 +217,8 @@ def inserir_chamado(usuario_id: int, descricao: str, triagem: dict) -> dict:
 
 
 def listar_chamados(usuario: dict) -> list[dict]:
-    """Chamados do mais recente para o mais antigo: o técnico vê a fila inteira,
-    o colaborador vê somente os próprios."""
+    """Chamados do mais recente para o mais antigo: técnico e administrador veem a fila
+    inteira, o usuário comum vê somente os próprios."""
     consulta = """
         SELECT c.id, u.nome AS solicitante, c.descricao, c.categoria, c.prioridade,
                c.resposta_sugerida, c.status, c.criado_em
@@ -224,7 +227,7 @@ def listar_chamados(usuario: dict) -> list[dict]:
         ORDER BY c.id DESC
     """
     with _conectar() as conexao:
-        if usuario["perfil"] == "TECNICO":
+        if usuario["perfil"] in ("TECNICO", "ADMIN"):
             linhas = conexao.execute(consulta.format(filtro="")).fetchall()
         else:
             linhas = conexao.execute(

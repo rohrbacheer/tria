@@ -20,7 +20,12 @@ const statusTexto = document.getElementById("status-texto");
 const SESSAO_CHAVE = "puchub_sessao";
 let sessao = null; // { token, nome, perfil }
 
-const NOME_PERFIL = { COLABORADOR: "Colaboradora(or)", TECNICO: "Técnico de TI" };
+const NOME_PERFIL = { USUARIO: "Usuária(o)", TECNICO: "Técnico de TI", ADMIN: "Administradora(or)" };
+
+// Perfis que enxergam a fila inteira de chamados (e a coluna Solicitante).
+function veAFilaInteira() {
+  return sessao.perfil === "TECNICO" || sessao.perfil === "ADMIN";
+}
 
 function carregarSessaoSalva() {
   try {
@@ -56,10 +61,10 @@ function entrarNoPortal() {
   document.getElementById("usuario-nome").textContent = sessao.nome;
   document.getElementById("usuario-perfil").textContent = NOME_PERFIL[sessao.perfil] || sessao.perfil;
 
-  // Áreas administrativas aparecem só para o técnico.
+  // Áreas administrativas aparecem só para o administrador.
   document
-    .querySelectorAll(".somente-tecnico")
-    .forEach((el) => el.classList.toggle("escondido", sessao.perfil !== "TECNICO"));
+    .querySelectorAll(".somente-admin")
+    .forEach((el) => el.classList.toggle("escondido", sessao.perfil !== "ADMIN"));
 
   // Sempre entra pelo Assistente — evita o novo perfil cair numa tela que não é dele.
   document.querySelectorAll(".menu-item").forEach((b) => b.classList.remove("ativo"));
@@ -129,7 +134,7 @@ const TITULOS = {
 
 function tituloDaView(view) {
   if (view === "chamados") {
-    return sessao.perfil === "TECNICO" ? "Fila de chamados" : "Meus chamados";
+    return veAFilaInteira() ? "Fila de chamados" : "Meus chamados";
   }
   return TITULOS[view];
 }
@@ -281,10 +286,10 @@ formChamado.addEventListener("submit", async (evento) => {
 /* ---------- Chamados (tabela) ---------- */
 
 async function carregarChamados() {
-  // A coluna Solicitante só faz sentido para quem vê a fila inteira (técnico).
+  // A coluna Solicitante só faz sentido para quem vê a fila inteira (técnico e admin).
   document
     .getElementById("tabela-chamados")
-    .classList.toggle("sem-solicitante", sessao.perfil !== "TECNICO");
+    .classList.toggle("sem-solicitante", !veAFilaInteira());
 
   const resposta = await fetchAuth("/chamados");
   if (!resposta.ok) return;

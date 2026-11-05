@@ -1,4 +1,4 @@
-"""API do PUCHUB — portal de TI com assistente virtual de IA Generativa."""
+﻿"""API do PUCHUB — portal de TI com assistente virtual de IA Generativa."""
 
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -43,10 +43,10 @@ def usuario_atual(authorization: str | None = Header(default=None)) -> dict:
     return usuario
 
 
-def tecnico_atual(usuario: dict = Depends(usuario_atual)) -> dict:
-    """Área administrativa: somente o perfil técnico passa."""
-    if usuario["perfil"] != "TECNICO":
-        raise HTTPException(status_code=403, detail="Somente o perfil técnico acessa as integrações.")
+def admin_atual(usuario: dict = Depends(usuario_atual)) -> dict:
+    """Área administrativa: somente o perfil administrador passa."""
+    if usuario["perfil"] != "ADMIN":
+        raise HTTPException(status_code=403, detail="Somente o administrador acessa as integrações.")
     return usuario
 
 
@@ -99,18 +99,18 @@ def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual
 
 @app.get("/chamados", response_model=list[ChamadoSaida], tags=["Chamados"])
 def listar_chamados(usuario: dict = Depends(usuario_atual)) -> list[dict]:
-    """Lista os chamados: o técnico vê a fila inteira, o colaborador só os próprios."""
+    """Lista os chamados: técnico e administrador veem a fila inteira, o usuário só os próprios."""
     return db.listar_chamados(usuario)
 
 
 @app.get("/integracoes", response_model=IntegracaoSaida, tags=["Integrações"])
-def ver_integracao(_tecnico: dict = Depends(tecnico_atual)) -> dict:
+def ver_integracao(_admin: dict = Depends(admin_atual)) -> dict:
     """Estado da integração com a IA: se há chave, de onde ela vem e o modelo em uso."""
     return ia.status_integracao()
 
 
 @app.post("/integracoes", response_model=IntegracaoSaida, tags=["Integrações"])
-def salvar_integracao(entrada: IntegracaoEntrada, _tecnico: dict = Depends(tecnico_atual)) -> dict:
+def salvar_integracao(entrada: IntegracaoEntrada, _admin: dict = Depends(admin_atual)) -> dict:
     """Grava a chave (e o modelo) no banco — ela passa a valer sobre a variável de ambiente."""
     db.salvar_config("gemini_api_key", entrada.gemini_api_key)
     if entrada.modelo:
@@ -119,7 +119,7 @@ def salvar_integracao(entrada: IntegracaoEntrada, _tecnico: dict = Depends(tecni
 
 
 @app.post("/integracoes/testar", tags=["Integrações"])
-def testar_integracao(_tecnico: dict = Depends(tecnico_atual)) -> dict:
+def testar_integracao(_admin: dict = Depends(admin_atual)) -> dict:
     """Faz uma chamada mínima ao Gemini para validar a chave configurada."""
     try:
         ia.testar_conexao()

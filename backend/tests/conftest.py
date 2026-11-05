@@ -28,14 +28,20 @@ def _login(cliente, login: str) -> dict:
 
 @pytest.fixture()
 def auth(cliente):
-    """Cabeçalho de sessão da colaboradora de demonstração (ana.souza)."""
+    """Cabeçalho de sessão da usuária de demonstração (ana.souza, perfil USUARIO)."""
     return _login(cliente, "ana.souza")
 
 
 @pytest.fixture()
 def auth_tecnico(cliente):
-    """Cabeçalho de sessão do técnico de demonstração (carlos.lima)."""
+    """Cabeçalho de sessão do técnico de demonstração (carlos.lima, perfil TECNICO)."""
     return _login(cliente, "carlos.lima")
+
+
+@pytest.fixture()
+def auth_admin(cliente):
+    """Cabeçalho de sessão da administradora de demonstração (julia.alves, perfil ADMIN)."""
+    return _login(cliente, "julia.alves")
 
 
 @pytest.fixture()
