@@ -26,3 +26,29 @@ def test_json_invalido_levanta_erro():
 def test_prompt_do_sistema_cita_todas_as_categorias():
     for categoria in ia.CATEGORIAS:
         assert categoria in ia.PROMPT_SISTEMA
+
+
+def test_parse_triagem_valida():
+    texto = json.dumps(
+        {"categoria": "Rede", "prioridade": "Alta", "resposta_sugerida": "Reinicie o roteador."}
+    )
+    assert ia._parse_triagem(texto) == {
+        "categoria": "Rede",
+        "prioridade": "Alta",
+        "resposta_sugerida": "Reinicie o roteador.",
+    }
+
+
+def test_triagem_com_categoria_desconhecida_vira_outro():
+    texto = json.dumps({"categoria": "Jardinagem", "prioridade": "Baixa", "resposta_sugerida": "Ok."})
+    assert ia._parse_triagem(texto)["categoria"] == "Outro"
+
+
+def test_triagem_com_prioridade_desconhecida_vira_media():
+    texto = json.dumps({"categoria": "Software", "prioridade": "Urgentíssima", "resposta_sugerida": "Ok."})
+    assert ia._parse_triagem(texto)["prioridade"] == "Média"
+
+
+def test_prompt_da_triagem_cita_todas_as_prioridades():
+    for prioridade in ia.PRIORIDADES:
+        assert prioridade in ia.PROMPT_TRIAGEM

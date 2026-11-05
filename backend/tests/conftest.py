@@ -43,3 +43,17 @@ def ia_mockada(monkeypatch):
     """Substitui a chamada ao Gemini por uma resposta fixa (mock)."""
     monkeypatch.setattr("app.ia.responder_pergunta", lambda pergunta: dict(RESPOSTA_FALSA))
     return RESPOSTA_FALSA
+
+
+TRIAGEM_FALSA = {
+    "categoria": "Hardware",
+    "prioridade": "Alta",
+    "resposta_sugerida": "Verifique se o cabo de energia está conectado e reinicie o equipamento.",
+}
+
+
+@pytest.fixture()
+def triagem_mockada(monkeypatch):
+    """Substitui a triagem do Gemini por uma resposta fixa (mock)."""
+    monkeypatch.setattr("app.ia.triar_chamado", lambda descricao: dict(TRIAGEM_FALSA))
+    return TRIAGEM_FALSA

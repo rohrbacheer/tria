@@ -69,6 +69,20 @@ def init_db() -> None:
             )
             """
         )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS chamados (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+                descricao TEXT NOT NULL,
+                categoria TEXT NOT NULL,
+                prioridade TEXT NOT NULL,
+                resposta_sugerida TEXT NOT NULL,
+                status TEXT NOT NULL,
+                criado_em TEXT NOT NULL
+            )
+            """
+        )
         ja_tem_usuarios = conexao.execute("SELECT COUNT(*) FROM usuarios").fetchone()[0]
         if ja_tem_usuarios == 0:
             for login, nome, senha, perfil in USUARIOS_DEMO:
@@ -137,4 +151,58 @@ def listar_historico(usuario_id: int) -> list[dict]:
             "SELECT id, pergunta, resposta, categoria, criado_em FROM perguntas WHERE usuario_id = ? ORDER BY id ASC",
             (usuario_id,),
         ).fetchall()
+    return [dict(linha) for linha in linhas]
+
+
+def inserir_chamado(usuario_id: int, descricao: str, triagem: dict) -> dict:
+    """Grava um chamado já triado pela IA e devolve o registro completo."""
+    criado_em = _agora()
+    with _conectar() as conexao:
+        cursor = conexao.execute(
+            """
+            INSERT INTO chamados (usuario_id, descricao, categoria, prioridade, resposta_sugerida, status, criado_em)
+            VALUES (?, ?, ?, ?, ?, 'Aberto', ?)
+            """,
+            (
+                usuario_id,
+                descricao,
+                triagem["categoria"],
+                triagem["prioridade"],
+                triagem["resposta_sugerida"],
+                criado_em,
+            ),
+        )
+        novo_id = cursor.lastrowid
+        solicitante = conexao.execute(
+            "SELECT nome FROM usuarios WHERE id = ?", (usuario_id,)
+        ).fetchone()["nome"]
+    return {
+        "id": novo_id,
+        "solicitante": solicitante,
+        "descricao": descricao,
+        "categoria": triagem["categoria"],
+        "prioridade": triagem["prioridade"],
+        "resposta_sugerida": triagem["resposta_sugerida"],
+        "status": "Aberto",
+        "criado_em": criado_em,
+    }
+
+
+def listar_chamados(usuario: dict) -> list[dict]:
+    """Chamados do mais recente para o mais antigo: o técnico vê a fila inteira,
+    o colaborador vê somente os próprios."""
+    consulta = """
+        SELECT c.id, u.nome AS solicitante, c.descricao, c.categoria, c.prioridade,
+               c.resposta_sugerida, c.status, c.criado_em
+        FROM chamados c JOIN usuarios u ON u.id = c.usuario_id
+        {filtro}
+        ORDER BY c.id DESC
+    """
+    with _conectar() as conexao:
+        if usuario["perfil"] == "TECNICO":
+            linhas = conexao.execute(consulta.format(filtro="")).fetchall()
+        else:
+            linhas = conexao.execute(
+                consulta.format(filtro="WHERE c.usuario_id = ?"), (usuario["id"],)
+            ).fetchall()
     return [dict(linha) for linha in linhas]

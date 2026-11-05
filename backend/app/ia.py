@@ -64,3 +64,58 @@ def _parse_resposta(texto: str) -> dict:
     if resposta.categoria not in CATEGORIAS:
         resposta.categoria = "Outro"
     return resposta.model_dump()
+
+
+# ---------- Triagem de chamados ----------
+
+PRIORIDADES = ["Baixa", "Média", "Alta"]
+
+PROMPT_TRIAGEM = f"""Você é o analista de triagem da TI do PUCHUB. Ao receber a descrição de um
+problema relatado por um colaborador, classifique o chamado e sugira uma primeira orientação.
+
+Regras:
+- "categoria" deve ser exatamente uma destas: {", ".join(CATEGORIAS)}.
+- "prioridade" deve ser exatamente uma destas: {", ".join(PRIORIDADES)}.
+  Use "Alta" quando o problema impede o trabalho de várias pessoas ou envolve sistema crítico,
+  "Média" quando impede o trabalho de uma pessoa e "Baixa" para dúvidas e melhorias.
+- "resposta_sugerida" deve ser curta (2 a 4 frases), em português, educada e prática, com os
+  primeiros passos que o colaborador pode tentar enquanto aguarda o atendimento.
+Responda somente com o JSON pedido."""
+
+
+class TriagemIA(BaseModel):
+    """Formato de saída estruturada exigido do Gemini na triagem."""
+
+    categoria: str
+    prioridade: str
+    resposta_sugerida: str
+
+
+def triar_chamado(descricao: str) -> dict:
+    """Envia a descrição do problema ao Gemini e devolve a triagem como dicionário.
+
+    Assim como responder_pergunta, é substituída por um mock nos testes.
+    """
+    cliente = _criar_cliente()
+    resposta = cliente.models.generate_content(
+        model=os.environ.get("GEMINI_MODEL", "gemini-2.5-flash"),
+        contents=descricao,
+        config=types.GenerateContentConfig(
+            system_instruction=PROMPT_TRIAGEM,
+            response_mime_type="application/json",
+            response_schema=TriagemIA,
+            temperature=0.2,
+        ),
+    )
+    return _parse_triagem(resposta.text)
+
+
+def _parse_triagem(texto: str) -> dict:
+    """Valida o JSON da triagem, com valores seguros caso a IA fuja das opções."""
+    dados = json.loads(texto)
+    triagem = TriagemIA(**dados)
+    if triagem.categoria not in CATEGORIAS:
+        triagem.categoria = "Outro"
+    if triagem.prioridade not in PRIORIDADES:
+        triagem.prioridade = "Média"
+    return triagem.model_dump()

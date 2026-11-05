@@ -7,7 +7,14 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
 
 from app import db, ia
-from app.schemas import LoginEntrada, LoginSaida, PerguntaEntrada, RespostaSaida
+from app.schemas import (
+    ChamadoEntrada,
+    ChamadoSaida,
+    LoginEntrada,
+    LoginSaida,
+    PerguntaEntrada,
+    RespostaSaida,
+)
 
 
 @asynccontextmanager
@@ -66,6 +73,25 @@ def perguntar(entrada: PerguntaEntrada, usuario: dict = Depends(usuario_atual)) 
 def historico(usuario: dict = Depends(usuario_atual)) -> list[dict]:
     """Lista as perguntas do próprio usuário, em ordem cronológica (como uma conversa)."""
     return db.listar_historico(usuario["id"])
+
+
+@app.post("/chamados", response_model=ChamadoSaida, status_code=201, tags=["Chamados"])
+def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual)) -> dict:
+    """Abre um chamado: a IA classifica categoria e prioridade e sugere a primeira orientação."""
+    try:
+        triagem = ia.triar_chamado(entrada.descricao)
+    except Exception as erro:
+        raise HTTPException(
+            status_code=502,
+            detail="Não foi possível consultar a IA no momento. Tente novamente em instantes.",
+        ) from erro
+    return db.inserir_chamado(usuario["id"], entrada.descricao, triagem)
+
+
+@app.get("/chamados", response_model=list[ChamadoSaida], tags=["Chamados"])
+def listar_chamados(usuario: dict = Depends(usuario_atual)) -> list[dict]:
+    """Lista os chamados: o técnico vê a fila inteira, o colaborador só os próprios."""
+    return db.listar_chamados(usuario)
 
 
 # Serve a interface web (pasta /frontend) na raiz do site — mesmo domínio da API, sem CORS.

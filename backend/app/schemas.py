@@ -36,3 +36,26 @@ class RespostaSaida(BaseModel):
     resposta: str
     categoria: str
     criado_em: str
+
+
+class ChamadoEntrada(BaseModel):
+    """Descrição do problema enviada ao abrir um chamado manualmente."""
+
+    descricao: str = Field(
+        min_length=10,
+        max_length=2000,
+        examples=["Minha impressora parou de imprimir e aparece um erro de driver na tela."],
+    )
+
+
+class ChamadoSaida(BaseModel):
+    """Chamado completo, já com a triagem feita pela IA."""
+
+    id: int
+    solicitante: str
+    descricao: str
+    categoria: str
+    prioridade: str
+    resposta_sugerida: str
+    status: str
+    criado_em: str
