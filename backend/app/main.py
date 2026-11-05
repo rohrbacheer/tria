@@ -134,9 +134,10 @@ def testar_integracao(_admin: dict = Depends(admin_atual)) -> dict:
     try:
         ia.testar_conexao()
     except Exception as erro:
+        # Tela do administrador: mostrar a causa real encurta o diagnóstico de chave/modelo.
         raise HTTPException(
             status_code=502,
-            detail="Não foi possível falar com o Gemini. Confira a chave e tente de novo.",
+            detail=f"Falha ao falar com o Gemini ({type(erro).__name__}): {str(erro)[:300]}",
         ) from erro
     return {"ok": True}
 
