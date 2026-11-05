@@ -71,6 +71,14 @@ def init_db() -> None:
         )
         conexao.execute(
             """
+            CREATE TABLE IF NOT EXISTS configuracoes (
+                chave TEXT PRIMARY KEY,
+                valor TEXT NOT NULL
+            )
+            """
+        )
+        conexao.execute(
+            """
             CREATE TABLE IF NOT EXISTS chamados (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
@@ -90,6 +98,23 @@ def init_db() -> None:
                     "INSERT INTO usuarios (login, nome, senha_hash, perfil) VALUES (?, ?, ?, ?)",
                     (login, nome, _hash_senha(senha), perfil),
                 )
+
+
+def salvar_config(chave: str, valor: str) -> None:
+    """Grava (ou substitui) uma configuração da tela de Integrações."""
+    with _conectar() as conexao:
+        conexao.execute(
+            "INSERT OR REPLACE INTO configuracoes (chave, valor) VALUES (?, ?)", (chave, valor)
+        )
+
+
+def ler_config(chave: str) -> str | None:
+    """Devolve o valor gravado, ou None se nunca foi configurado."""
+    with _conectar() as conexao:
+        linha = conexao.execute(
+            "SELECT valor FROM configuracoes WHERE chave = ?", (chave,)
+        ).fetchone()
+    return linha["valor"] if linha else None
 
 
 def autenticar(login: str, senha: str) -> dict | None:

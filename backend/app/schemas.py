@@ -38,6 +38,21 @@ class RespostaSaida(BaseModel):
     criado_em: str
 
 
+class IntegracaoEntrada(BaseModel):
+    """Configuração da IA enviada pela tela de Integrações (só o perfil técnico)."""
+
+    gemini_api_key: str = Field(min_length=10, max_length=200)
+    modelo: str | None = Field(default=None, max_length=100, examples=["gemini-2.5-flash"])
+
+
+class IntegracaoSaida(BaseModel):
+    """Estado da integração: a chave em si nunca volta para o navegador."""
+
+    gemini_configurada: bool
+    origem: str | None  # "banco", "ambiente" ou None
+    modelo: str
+
+
 class ChamadoEntrada(BaseModel):
     """Descrição do problema enviada ao abrir um chamado manualmente."""
 

@@ -10,6 +10,8 @@ from app import db, ia
 from app.schemas import (
     ChamadoEntrada,
     ChamadoSaida,
+    IntegracaoEntrada,
+    IntegracaoSaida,
     LoginEntrada,
     LoginSaida,
     PerguntaEntrada,
@@ -38,6 +40,13 @@ def usuario_atual(authorization: str | None = Header(default=None)) -> dict:
     usuario = db.usuario_do_token(authorization.removeprefix("Bearer "))
     if usuario is None:
         raise HTTPException(status_code=401, detail="Sessão inválida. Faça login de novo.")
+    return usuario
+
+
+def tecnico_atual(usuario: dict = Depends(usuario_atual)) -> dict:
+    """Área administrativa: somente o perfil técnico passa."""
+    if usuario["perfil"] != "TECNICO":
+        raise HTTPException(status_code=403, detail="Somente o perfil técnico acessa as integrações.")
     return usuario
 
 
@@ -92,6 +101,34 @@ def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual
 def listar_chamados(usuario: dict = Depends(usuario_atual)) -> list[dict]:
     """Lista os chamados: o técnico vê a fila inteira, o colaborador só os próprios."""
     return db.listar_chamados(usuario)
+
+
+@app.get("/integracoes", response_model=IntegracaoSaida, tags=["Integrações"])
+def ver_integracao(_tecnico: dict = Depends(tecnico_atual)) -> dict:
+    """Estado da integração com a IA: se há chave, de onde ela vem e o modelo em uso."""
+    return ia.status_integracao()
+
+
+@app.post("/integracoes", response_model=IntegracaoSaida, tags=["Integrações"])
+def salvar_integracao(entrada: IntegracaoEntrada, _tecnico: dict = Depends(tecnico_atual)) -> dict:
+    """Grava a chave (e o modelo) no banco — ela passa a valer sobre a variável de ambiente."""
+    db.salvar_config("gemini_api_key", entrada.gemini_api_key)
+    if entrada.modelo:
+        db.salvar_config("gemini_modelo", entrada.modelo)
+    return ia.status_integracao()
+
+
+@app.post("/integracoes/testar", tags=["Integrações"])
+def testar_integracao(_tecnico: dict = Depends(tecnico_atual)) -> dict:
+    """Faz uma chamada mínima ao Gemini para validar a chave configurada."""
+    try:
+        ia.testar_conexao()
+    except Exception as erro:
+        raise HTTPException(
+            status_code=502,
+            detail="Não foi possível falar com o Gemini. Confira a chave e tente de novo.",
+        ) from erro
+    return {"ok": True}
 
 
 # Serve a interface web (pasta /frontend) na raiz do site — mesmo domínio da API, sem CORS.

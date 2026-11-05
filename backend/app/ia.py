@@ -7,6 +7,8 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
+from app import db
+
 CATEGORIAS = ["Hardware", "Software", "Rede", "Acesso e Senhas", "E-mail", "Outro"]
 
 PROMPT_SISTEMA = f"""Você é a assistente virtual de TI do PUCHUB, o portal de serviços de TI de uma
@@ -32,9 +34,40 @@ class RespostaIA(BaseModel):
     categoria: str
 
 
+def _chave_api() -> str:
+    """Chave do Gemini: a gravada na tela de Integrações (banco) tem prioridade sobre a
+    variável de ambiente GEMINI_API_KEY. Nunca fica no código."""
+    chave = db.ler_config("gemini_api_key") or os.environ.get("GEMINI_API_KEY")
+    if not chave:
+        raise RuntimeError("Chave do Gemini não configurada (tela de Integrações ou GEMINI_API_KEY).")
+    return chave
+
+
+def _modelo() -> str:
+    """Modelo do Gemini, com a mesma precedência da chave (banco > ambiente > padrão)."""
+    return db.ler_config("gemini_modelo") or os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+
+def status_integracao() -> dict:
+    """O que a tela de Integrações mostra: se há chave, de onde ela vem e o modelo em uso."""
+    if db.ler_config("gemini_api_key"):
+        origem = "banco"
+    elif os.environ.get("GEMINI_API_KEY"):
+        origem = "ambiente"
+    else:
+        origem = None
+    return {"gemini_configurada": origem is not None, "origem": origem, "modelo": _modelo()}
+
+
+def testar_conexao() -> None:
+    """Chamada mínima ao Gemini só para validar a chave (botão Testar da tela de Integrações)."""
+    cliente = _criar_cliente()
+    cliente.models.generate_content(model=_modelo(), contents="Responda apenas: ok")
+
+
 def _criar_cliente() -> genai.Client:
-    """Cria o cliente do Gemini lendo a chave da variável de ambiente (nunca do código)."""
-    return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    """Cria o cliente do Gemini com a chave configurada (banco ou ambiente)."""
+    return genai.Client(api_key=_chave_api())
 
 
 def responder_pergunta(pergunta: str) -> dict:
@@ -45,7 +78,7 @@ def responder_pergunta(pergunta: str) -> dict:
     """
     cliente = _criar_cliente()
     resposta = cliente.models.generate_content(
-        model=os.environ.get("GEMINI_MODEL", "gemini-2.5-flash"),
+        model=_modelo(),
         contents=pergunta,
         config=types.GenerateContentConfig(
             system_instruction=PROMPT_SISTEMA,
@@ -98,7 +131,7 @@ def triar_chamado(descricao: str) -> dict:
     """
     cliente = _criar_cliente()
     resposta = cliente.models.generate_content(
-        model=os.environ.get("GEMINI_MODEL", "gemini-2.5-flash"),
+        model=_modelo(),
         contents=descricao,
         config=types.GenerateContentConfig(
             system_instruction=PROMPT_TRIAGEM,
