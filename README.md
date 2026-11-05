@@ -16,7 +16,7 @@ para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
 ## Como funciona
 
 ```
-frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (gemini-2.5-flash)
+frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (gemini-3.8-flash)
                                         ↓
                                  SQLite (usuários, sessões, perguntas e solicitações)
 ```
