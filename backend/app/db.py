@@ -85,10 +85,11 @@ def init_db() -> None:
             CREATE TABLE IF NOT EXISTS chamados (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+                titulo TEXT NOT NULL,
                 descricao TEXT NOT NULL,
                 categoria TEXT NOT NULL,
                 prioridade TEXT NOT NULL,
-                resposta_sugerida TEXT NOT NULL,
+                orientacao TEXT NOT NULL,
                 status TEXT NOT NULL,
                 criado_em TEXT NOT NULL
             )
@@ -182,23 +183,18 @@ def listar_historico(usuario_id: int) -> list[dict]:
     return [dict(linha) for linha in linhas]
 
 
-def inserir_chamado(usuario_id: int, descricao: str, triagem: dict) -> dict:
-    """Grava um chamado já triado pela IA e devolve o registro completo."""
+def inserir_chamado(
+    usuario_id: int, titulo: str, descricao: str, categoria: str, prioridade: str, orientacao: str
+) -> dict:
+    """Grava um chamado classificado pelo usuário (com a orientação da IA) e devolve o registro."""
     criado_em = _agora()
     with _conectar() as conexao:
         cursor = conexao.execute(
             """
-            INSERT INTO chamados (usuario_id, descricao, categoria, prioridade, resposta_sugerida, status, criado_em)
-            VALUES (?, ?, ?, ?, ?, 'Aberto', ?)
+            INSERT INTO chamados (usuario_id, titulo, descricao, categoria, prioridade, orientacao, status, criado_em)
+            VALUES (?, ?, ?, ?, ?, ?, 'Aberto', ?)
             """,
-            (
-                usuario_id,
-                descricao,
-                triagem["categoria"],
-                triagem["prioridade"],
-                triagem["resposta_sugerida"],
-                criado_em,
-            ),
+            (usuario_id, titulo, descricao, categoria, prioridade, orientacao, criado_em),
         )
         novo_id = cursor.lastrowid
         solicitante = conexao.execute(
@@ -207,10 +203,11 @@ def inserir_chamado(usuario_id: int, descricao: str, triagem: dict) -> dict:
     return {
         "id": novo_id,
         "solicitante": solicitante,
+        "titulo": titulo,
         "descricao": descricao,
-        "categoria": triagem["categoria"],
-        "prioridade": triagem["prioridade"],
-        "resposta_sugerida": triagem["resposta_sugerida"],
+        "categoria": categoria,
+        "prioridade": prioridade,
+        "orientacao": orientacao,
         "status": "Aberto",
         "criado_em": criado_em,
     }
@@ -220,8 +217,8 @@ def listar_chamados(usuario: dict) -> list[dict]:
     """Chamados do mais recente para o mais antigo: técnico e administrador veem a fila
     inteira, o usuário comum vê somente os próprios."""
     consulta = """
-        SELECT c.id, u.nome AS solicitante, c.descricao, c.categoria, c.prioridade,
-               c.resposta_sugerida, c.status, c.criado_em
+        SELECT c.id, u.nome AS solicitante, c.titulo, c.descricao, c.categoria, c.prioridade,
+               c.orientacao, c.status, c.criado_em
         FROM chamados c JOIN usuarios u ON u.id = c.usuario_id
         {filtro}
         ORDER BY c.id DESC

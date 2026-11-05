@@ -84,17 +84,27 @@ def historico(usuario: dict = Depends(usuario_atual)) -> list[dict]:
     return db.listar_historico(usuario["id"])
 
 
+@app.get("/opcoes", tags=["Chamados"])
+def opcoes(_usuario: dict = Depends(usuario_atual)) -> dict:
+    """Opções de classificação do chamado manual (as mesmas listas que a IA conhece)."""
+    return {"categorias": ia.CATEGORIAS, "prioridades": ia.PRIORIDADES}
+
+
 @app.post("/chamados", response_model=ChamadoSaida, status_code=201, tags=["Chamados"])
 def abrir_chamado(entrada: ChamadoEntrada, usuario: dict = Depends(usuario_atual)) -> dict:
-    """Abre um chamado: a IA classifica categoria e prioridade e sugere a primeira orientação."""
+    """Abre um chamado classificado pelo próprio usuário; a IA escreve a primeira orientação."""
     try:
-        triagem = ia.triar_chamado(entrada.descricao)
+        orientacao = ia.gerar_orientacao(
+            entrada.titulo, entrada.descricao, entrada.categoria, entrada.prioridade
+        )
     except Exception as erro:
         raise HTTPException(
             status_code=502,
             detail="Não foi possível consultar a IA no momento. Tente novamente em instantes.",
         ) from erro
-    return db.inserir_chamado(usuario["id"], entrada.descricao, triagem)
+    return db.inserir_chamado(
+        usuario["id"], entrada.titulo, entrada.descricao, entrada.categoria, entrada.prioridade, orientacao
+    )
 
 
 @app.get("/chamados", response_model=list[ChamadoSaida], tags=["Chamados"])

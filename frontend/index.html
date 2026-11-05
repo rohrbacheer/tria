@@ -145,6 +145,28 @@
           <section id="view-abrir" class="view escondido">
             <div class="cartao form-chamado-cartao">
               <form id="form-chamado" class="form-chamado">
+                <label for="titulo">Título</label>
+                <input
+                  id="titulo"
+                  name="titulo"
+                  type="text"
+                  minlength="5"
+                  maxlength="100"
+                  placeholder="Resumo curto do problema (ex.: impressora não imprime)"
+                  required
+                />
+
+                <div class="linha-classificacao">
+                  <div class="campo">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" name="categoria" required></select>
+                  </div>
+                  <div class="campo">
+                    <label for="prioridade">Prioridade</label>
+                    <select id="prioridade" name="prioridade" required></select>
+                  </div>
+                </div>
+
                 <label for="descricao">Descreva o problema</label>
                 <textarea
                   id="descricao"
@@ -162,12 +184,11 @@
 
             <div id="chamado-resultado" class="cartao resultado escondido">
               <h2 id="resultado-protocolo"></h2>
-              <p class="resultado-legenda">Triagem feita pela IA:</p>
               <div class="resultado-pills">
                 <span id="resultado-categoria" class="pill"></span>
                 <span id="resultado-prioridade" class="pill"></span>
               </div>
-              <p class="resultado-legenda">Enquanto a equipe não atende, você pode tentar:</p>
+              <p class="resultado-legenda">Orientação da IA enquanto a equipe não atende:</p>
               <p id="resultado-orientacao" class="resultado-orientacao"></p>
             </div>
           </section>
@@ -179,7 +200,7 @@
                   <tr>
                     <th>#</th>
                     <th class="col-solicitante">Solicitante</th>
-                    <th>Descrição</th>
+                    <th>Título</th>
                     <th>Categoria</th>
                     <th>Prioridade</th>
                     <th>Status</th>
@@ -268,8 +289,9 @@
                   <li><code>POST /login</code> — abre a sessão</li>
                   <li><code>POST /perguntar</code> — envia a pergunta à IA</li>
                   <li><code>GET /historico</code> — perguntas já respondidas</li>
-                  <li><code>POST /chamados</code> — abre chamado com triagem da IA</li>
-                  <li><code>GET /chamados</code> — seus chamados (técnico vê a fila inteira)</li>
+                  <li><code>GET /opcoes</code> — categorias e prioridades do chamado</li>
+                  <li><code>POST /chamados</code> — você classifica, a IA escreve a orientação</li>
+                  <li><code>GET /chamados</code> — seus chamados (técnico/admin veem a fila)</li>
                   <li><code>GET/POST /integracoes</code> — configuração da IA (só administrador)</li>
                 </ul>
                 <p><a href="/docs">Documentação interativa (Swagger) →</a></p>

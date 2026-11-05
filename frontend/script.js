@@ -77,6 +77,7 @@ function entrarNoPortal() {
   conversa.querySelectorAll(".balao:not(#saudacao)").forEach((b) => b.remove());
   verificarSaude();
   carregarConversa();
+  carregarOpcoes();
 }
 
 // Com o token inválido ou expirado, qualquer chamada volta 401: cai para a tela de login.
@@ -236,6 +237,26 @@ document.getElementById("botao-testar").addEventListener("click", async () => {
 
 /* ---------- Abrir chamado ---------- */
 
+// As opções de classificação vêm da API (as mesmas listas que a IA conhece).
+async function carregarOpcoes() {
+  const resposta = await fetchAuth("/opcoes");
+  if (!resposta.ok) return;
+  const opcoes = await resposta.json();
+
+  const selectCategoria = document.getElementById("categoria");
+  const selectPrioridade = document.getElementById("prioridade");
+  selectCategoria.innerHTML = "";
+  selectPrioridade.innerHTML = "";
+
+  for (const categoria of opcoes.categorias) {
+    selectCategoria.add(new Option(categoria, categoria));
+  }
+  for (const prioridade of opcoes.prioridades) {
+    selectPrioridade.add(new Option(prioridade, prioridade));
+  }
+  selectPrioridade.value = "Média"; // ponto de partida mais comum
+}
+
 const formChamado = document.getElementById("form-chamado");
 const botaoAbrir = document.getElementById("botao-abrir");
 const chamadoErro = document.getElementById("chamado-erro");
@@ -250,13 +271,18 @@ formChamado.addEventListener("submit", async (evento) => {
   chamadoErro.classList.add("escondido");
   chamadoResultado.classList.add("escondido");
   botaoAbrir.disabled = true;
-  botaoAbrir.textContent = "A IA está fazendo a triagem…";
+  botaoAbrir.textContent = "A IA está escrevendo a orientação…";
 
   try {
     const resposta = await fetchAuth("/chamados", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ descricao: document.getElementById("descricao").value.trim() }),
+      body: JSON.stringify({
+        titulo: document.getElementById("titulo").value.trim(),
+        descricao: document.getElementById("descricao").value.trim(),
+        categoria: document.getElementById("categoria").value,
+        prioridade: document.getElementById("prioridade").value,
+      }),
     });
 
     if (!resposta.ok) {
@@ -266,14 +292,15 @@ formChamado.addEventListener("submit", async (evento) => {
 
     const chamado = await resposta.json();
     document.getElementById("resultado-protocolo").textContent =
-      "Chamado #" + chamado.id + " aberto";
+      "Chamado #" + chamado.id + " aberto — " + chamado.titulo;
     document.getElementById("resultado-categoria").textContent = chamado.categoria;
     const pillPrioridade = document.getElementById("resultado-prioridade");
     pillPrioridade.textContent = "Prioridade " + chamado.prioridade;
     pillPrioridade.className = classeDePrioridade(chamado.prioridade);
-    document.getElementById("resultado-orientacao").textContent = chamado.resposta_sugerida;
+    document.getElementById("resultado-orientacao").textContent = chamado.orientacao;
     chamadoResultado.classList.remove("escondido");
     formChamado.reset();
+    document.getElementById("prioridade").value = "Média";
   } catch (erro) {
     chamadoErro.textContent = erro.message;
     chamadoErro.classList.remove("escondido");
@@ -310,9 +337,10 @@ async function carregarChamados() {
     colunaSolicitante.className = "col-solicitante";
     colunaSolicitante.textContent = chamado.solicitante;
 
-    const colunaDescricao = document.createElement("td");
-    colunaDescricao.className = "col-pergunta";
-    colunaDescricao.textContent = chamado.descricao;
+    const colunaTitulo = document.createElement("td");
+    colunaTitulo.className = "col-pergunta";
+    colunaTitulo.textContent = chamado.titulo;
+    colunaTitulo.title = chamado.descricao; // a descrição completa aparece ao passar o mouse
 
     const colunaCategoria = document.createElement("td");
     const pillCategoria = document.createElement("span");
@@ -336,7 +364,7 @@ async function carregarChamados() {
     linha.append(
       colunaId,
       colunaSolicitante,
-      colunaDescricao,
+      colunaTitulo,
       colunaCategoria,
       colunaPrioridade,
       colunaStatus,

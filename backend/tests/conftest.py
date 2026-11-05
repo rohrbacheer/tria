@@ -51,15 +51,11 @@ def ia_mockada(monkeypatch):
     return RESPOSTA_FALSA
 
 
-TRIAGEM_FALSA = {
-    "categoria": "Hardware",
-    "prioridade": "Alta",
-    "resposta_sugerida": "Verifique se o cabo de energia está conectado e reinicie o equipamento.",
-}
+ORIENTACAO_FALSA = "Verifique se o cabo de energia está conectado e reinicie o equipamento."
 
 
 @pytest.fixture()
-def triagem_mockada(monkeypatch):
-    """Substitui a triagem do Gemini por uma resposta fixa (mock)."""
-    monkeypatch.setattr("app.ia.triar_chamado", lambda descricao: dict(TRIAGEM_FALSA))
-    return TRIAGEM_FALSA
+def orientacao_mockada(monkeypatch):
+    """Substitui a orientação do Gemini por um texto fixo (mock)."""
+    monkeypatch.setattr("app.ia.gerar_orientacao", lambda *dados: ORIENTACAO_FALSA)
+    return ORIENTACAO_FALSA

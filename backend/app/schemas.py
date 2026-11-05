@@ -1,6 +1,8 @@
 """Modelos de entrada e saída da API (validação automática do FastAPI/Pydantic)."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+from app.ia import CATEGORIAS, PRIORIDADES
 
 
 class LoginEntrada(BaseModel):
@@ -54,23 +56,41 @@ class IntegracaoSaida(BaseModel):
 
 
 class ChamadoEntrada(BaseModel):
-    """Descrição do problema enviada ao abrir um chamado manualmente."""
+    """Chamado aberto manualmente: o próprio usuário classifica antes de enviar."""
 
+    titulo: str = Field(min_length=5, max_length=100, examples=["Impressora não imprime"])
     descricao: str = Field(
         min_length=10,
         max_length=2000,
         examples=["Minha impressora parou de imprimir e aparece um erro de driver na tela."],
     )
+    categoria: str = Field(examples=["Hardware"])
+    prioridade: str = Field(examples=["Média"])
+
+    @field_validator("categoria")
+    @classmethod
+    def _categoria_do_catalogo(cls, valor: str) -> str:
+        if valor not in CATEGORIAS:
+            raise ValueError(f"deve ser uma destas: {', '.join(CATEGORIAS)}")
+        return valor
+
+    @field_validator("prioridade")
+    @classmethod
+    def _prioridade_valida(cls, valor: str) -> str:
+        if valor not in PRIORIDADES:
+            raise ValueError(f"deve ser uma destas: {', '.join(PRIORIDADES)}")
+        return valor
 
 
 class ChamadoSaida(BaseModel):
-    """Chamado completo, já com a triagem feita pela IA."""
+    """Chamado completo, com a orientação inicial escrita pela IA."""
 
     id: int
     solicitante: str
+    titulo: str
     descricao: str
     categoria: str
     prioridade: str
-    resposta_sugerida: str
+    orientacao: str
     status: str
     criado_em: str
