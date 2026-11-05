@@ -1,0 +1,16 @@
+# Blueprint do Render: cria o serviço automaticamente ao importar o repositório.
+# A chave GEMINI_API_KEY é configurada no painel do Render (sync: false) — nunca no código.
+services:
+  - type: web
+    name: puchub
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /saude
+    autoDeploy: true
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.10
