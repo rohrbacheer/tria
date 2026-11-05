@@ -8,6 +8,65 @@ const mensagemErro = document.getElementById("mensagem-erro");
 const statusDot = document.getElementById("status-dot");
 const statusTexto = document.getElementById("status-texto");
 
+/* ---------- Navegação entre as telas ---------- */
+
+const TITULOS = {
+  assistente: "Assistente Virtual",
+  historico: "Histórico de perguntas",
+  sobre: "Sobre o projeto",
+};
+
+document.querySelectorAll(".menu-item").forEach((botao) => {
+  botao.addEventListener("click", () => {
+    document.querySelectorAll(".menu-item").forEach((b) => b.classList.remove("ativo"));
+    botao.classList.add("ativo");
+
+    const view = botao.dataset.view;
+    document.querySelectorAll(".view").forEach((v) => v.classList.add("escondido"));
+    document.getElementById("view-" + view).classList.remove("escondido");
+    document.getElementById("titulo-pagina").textContent = TITULOS[view];
+
+    if (view === "historico") carregarTabelaHistorico();
+  });
+});
+
+/* ---------- Histórico (tabela) ---------- */
+
+async function carregarTabelaHistorico() {
+  const resposta = await fetch("/historico");
+  if (!resposta.ok) return;
+  const itens = await resposta.json();
+
+  const corpo = document.getElementById("historico-linhas");
+  const vazio = document.getElementById("historico-vazio");
+  corpo.innerHTML = "";
+  vazio.classList.toggle("escondido", itens.length > 0);
+
+  for (const item of itens.slice().reverse()) {
+    const linha = document.createElement("tr");
+
+    const colunaId = document.createElement("td");
+    colunaId.textContent = "#" + item.id;
+
+    const colunaPergunta = document.createElement("td");
+    colunaPergunta.className = "col-pergunta";
+    colunaPergunta.textContent = item.pergunta;
+
+    const colunaCategoria = document.createElement("td");
+    const pill = document.createElement("span");
+    pill.className = "pill";
+    pill.textContent = item.categoria;
+    colunaCategoria.appendChild(pill);
+
+    const colunaData = document.createElement("td");
+    colunaData.className = "col-data";
+    colunaData.textContent = new Date(item.criado_em).toLocaleString("pt-BR");
+
+    linha.append(colunaId, colunaPergunta, colunaCategoria, colunaData);
+    corpo.appendChild(linha);
+  }
+}
+
 /* ---------- Status da API na barra lateral ---------- */
 
 async function verificarSaude() {

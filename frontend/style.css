@@ -355,6 +355,109 @@ body {
   cursor: wait;
 }
 
+/* ---------- Histórico (tabela) ---------- */
+
+.tabela-area {
+  padding: 8px 20px 16px;
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tabela th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--mut);
+  padding: 12px 10px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tabela td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.col-pergunta {
+  max-width: 420px;
+}
+
+.col-data {
+  white-space: nowrap;
+  color: var(--mut);
+}
+
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgb(111 29 51 / 0.1);
+  padding: 2px 10px;
+  border-radius: var(--raio-pill);
+  white-space: nowrap;
+}
+
+.vazio {
+  padding: 24px 10px;
+  color: var(--mut);
+}
+
+/* ---------- Sobre ---------- */
+
+.grade-sobre {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  max-width: 860px;
+}
+
+.bloco-sobre {
+  padding: 18px 20px;
+  display: block;
+}
+
+.bloco-sobre h2 {
+  margin: 0 0 8px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 16px;
+}
+
+.bloco-sobre p,
+.bloco-sobre ul {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--mut);
+}
+
+.bloco-sobre ul {
+  padding-left: 18px;
+}
+
+.bloco-sobre code {
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.bloco-sobre a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* ---------- Telas estreitas: a barra vira cabeçalho ---------- */
 
 @media (max-width: 760px) {

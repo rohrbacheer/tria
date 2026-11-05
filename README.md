@@ -21,8 +21,9 @@ frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (
 - **`/backend`** — API em FastAPI. A pergunta vai ao Gemini com um prompt de sistema que
   define o papel de assistente de TI e exige **saída estruturada em JSON** (`resposta` +
   `categoria`). Cada resposta é gravada em SQLite.
-- **`/frontend`** — interface de chat em HTML, CSS e JavaScript puros, servida pelo próprio
-  FastAPI (mesma origem, sem CORS).
+- **`/frontend`** — portal em HTML, CSS e JavaScript puros (sem frameworks), servido pelo próprio
+  FastAPI (mesma origem, sem CORS): shell com barra lateral e três telas — Assistente Virtual
+  (chat), Histórico (tabela) e Sobre, com tema claro/escuro automático.
 
 ## Endpoints da API
 

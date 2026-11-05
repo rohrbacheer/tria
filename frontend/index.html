@@ -28,6 +28,21 @@
             </svg>
             Assistente Virtual
           </button>
+          <button class="menu-item" data-view="historico" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg>
+            Histórico
+          </button>
+          <button class="menu-item" data-view="sobre" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" />
+              <path d="M12 8h.01" />
+            </svg>
+            Sobre o projeto
+          </button>
         </nav>
 
         <div class="sidebar-rodape">
@@ -69,6 +84,53 @@
               />
               <button id="botao-enviar" type="submit">Perguntar</button>
             </form>
+          </section>
+
+          <section id="view-historico" class="view cartao escondido">
+            <div class="tabela-area">
+              <table class="tabela">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Pergunta</th>
+                    <th>Categoria</th>
+                    <th>Quando</th>
+                  </tr>
+                </thead>
+                <tbody id="historico-linhas"></tbody>
+              </table>
+              <p id="historico-vazio" class="vazio escondido">Nenhuma pergunta respondida ainda.</p>
+            </div>
+          </section>
+
+          <section id="view-sobre" class="view escondido">
+            <div class="grade-sobre">
+              <div class="cartao bloco-sobre">
+                <h2>O que é</h2>
+                <p>
+                  O PUCHUB é um portal de TI fictício com uma assistente virtual de IA Generativa:
+                  você pergunta, o Google Gemini responde e ainda classifica a categoria da dúvida.
+                  Projeto individual do Desafio da Trilha de DevOps e IA Generativa (PUCPR).
+                </p>
+              </div>
+              <div class="cartao bloco-sobre">
+                <h2>Stack</h2>
+                <p>
+                  Backend em FastAPI (Python 3.12) com saída estruturada do Gemini e histórico em
+                  SQLite. Frontend em HTML, CSS e JavaScript puros. Testes com pytest (IA mockada,
+                  cobertura mínima de 70%), CI no GitHub Actions e deploy contínuo no Render.
+                </p>
+              </div>
+              <div class="cartao bloco-sobre">
+                <h2>Endpoints da API</h2>
+                <ul>
+                  <li><code>GET /saude</code> — health check</li>
+                  <li><code>POST /perguntar</code> — envia a pergunta à IA</li>
+                  <li><code>GET /historico</code> — perguntas já respondidas</li>
+                </ul>
+                <p><a href="/docs">Documentação interativa (Swagger) →</a></p>
+              </div>
+            </div>
           </section>
         </main>
       </div>
