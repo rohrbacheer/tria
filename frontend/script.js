@@ -56,6 +56,18 @@ function entrarNoPortal() {
   document.getElementById("usuario-nome").textContent = sessao.nome;
   document.getElementById("usuario-perfil").textContent = NOME_PERFIL[sessao.perfil] || sessao.perfil;
 
+  // Áreas administrativas aparecem só para o técnico.
+  document
+    .querySelectorAll(".somente-tecnico")
+    .forEach((el) => el.classList.toggle("escondido", sessao.perfil !== "TECNICO"));
+
+  // Sempre entra pelo Assistente — evita o novo perfil cair numa tela que não é dele.
+  document.querySelectorAll(".menu-item").forEach((b) => b.classList.remove("ativo"));
+  document.querySelector('.menu-item[data-view="assistente"]').classList.add("ativo");
+  document.querySelectorAll(".view").forEach((v) => v.classList.add("escondido"));
+  document.getElementById("view-assistente").classList.remove("escondido");
+  document.getElementById("titulo-pagina").textContent = TITULOS.assistente;
+
   // Zera a conversa (fica só a saudação) e carrega o histórico do usuário logado.
   conversa.querySelectorAll(".balao:not(#saudacao)").forEach((b) => b.remove());
   verificarSaude();
@@ -111,6 +123,7 @@ const TITULOS = {
   abrir: "Abrir chamado",
   chamados: "Chamados",
   historico: "Histórico de perguntas",
+  integracoes: "Integrações",
   sobre: "Sobre o projeto",
 };
 
@@ -133,7 +146,87 @@ document.querySelectorAll(".menu-item").forEach((botao) => {
 
     if (view === "historico") carregarTabelaHistorico();
     if (view === "chamados") carregarChamados();
+    if (view === "integracoes") carregarIntegracoes();
   });
+});
+
+/* ---------- Integrações (área do técnico) ---------- */
+
+const formIntegracao = document.getElementById("form-integracao");
+const integracaoErro = document.getElementById("integracao-erro");
+const integracaoOk = document.getElementById("integracao-ok");
+
+function mostrarStatusIntegracao(estado) {
+  const alvo = document.getElementById("integracao-status");
+  if (!estado.gemini_configurada) {
+    alvo.textContent = "⚠ Gemini ainda não configurado — o assistente e a triagem ficam indisponíveis.";
+    alvo.className = "status-integracao pendente";
+    return;
+  }
+  const origem = estado.origem === "banco" ? "chave salva pela tela" : "variável de ambiente";
+  alvo.textContent = `✓ Gemini configurado (${origem}) · modelo ${estado.modelo}`;
+  alvo.className = "status-integracao ok";
+}
+
+async function carregarIntegracoes() {
+  const resposta = await fetchAuth("/integracoes");
+  if (!resposta.ok) return;
+  mostrarStatusIntegracao(await resposta.json());
+}
+
+formIntegracao.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  integracaoErro.classList.add("escondido");
+  integracaoOk.classList.add("escondido");
+
+  const modelo = document.getElementById("campo-modelo").value.trim();
+  try {
+    const resposta = await fetchAuth("/integracoes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gemini_api_key: document.getElementById("campo-chave").value.trim(),
+        ...(modelo ? { modelo } : {}),
+      }),
+    });
+
+    if (!resposta.ok) {
+      const corpo = await resposta.json().catch(() => ({}));
+      throw new Error(corpo.detail || "Não foi possível salvar. Tente novamente.");
+    }
+
+    mostrarStatusIntegracao(await resposta.json());
+    formIntegracao.reset();
+    integracaoOk.textContent = "Configuração salva. Use o botão ao lado para testar a conexão.";
+    integracaoOk.classList.remove("escondido");
+  } catch (erro) {
+    integracaoErro.textContent = erro.message;
+    integracaoErro.classList.remove("escondido");
+  }
+});
+
+document.getElementById("botao-testar").addEventListener("click", async () => {
+  const botao = document.getElementById("botao-testar");
+  integracaoErro.classList.add("escondido");
+  integracaoOk.classList.add("escondido");
+  botao.disabled = true;
+  botao.textContent = "Testando…";
+
+  try {
+    const resposta = await fetchAuth("/integracoes/testar", { method: "POST" });
+    if (!resposta.ok) {
+      const corpo = await resposta.json().catch(() => ({}));
+      throw new Error(corpo.detail || "Falha no teste de conexão.");
+    }
+    integracaoOk.textContent = "Conexão com o Gemini funcionando. ✔";
+    integracaoOk.classList.remove("escondido");
+  } catch (erro) {
+    integracaoErro.textContent = erro.message;
+    integracaoErro.classList.remove("escondido");
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "Testar conexão";
+  }
 });
 
 /* ---------- Abrir chamado ---------- */

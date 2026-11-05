@@ -36,6 +36,9 @@ frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (
 | `GET`  | `/historico` | Perguntas já respondidas do usuário logado, em ordem cronológica       |
 | `POST` | `/chamados`  | Abre um chamado: a IA tria categoria, prioridade e primeira orientação |
 | `GET`  | `/chamados`  | Chamados do usuário; o perfil de técnico vê a fila inteira             |
+| `GET`  | `/integracoes` | Estado da integração com a IA (só técnico; a chave nunca volta)      |
+| `POST` | `/integracoes` | Salva a chave/modelo do Gemini pela tela — vence a variável de ambiente |
+| `POST` | `/integracoes/testar` | Chamada mínima ao Gemini para validar a chave configurada     |
 
 Documentação interativa (Swagger) em `/docs`.
 
@@ -85,9 +88,11 @@ pytest
 
 ## Segurança da chave
 
-A chave do Gemini vive **somente** na variável de ambiente `GEMINI_API_KEY` (arquivo `.env`
-local, ignorado pelo git, e painel do Render em produção). Nenhuma chave aparece no código nem
-no histórico de commits — veja o [.env.example](.env.example).
+A chave do Gemini nunca aparece no código nem no histórico de commits. Ela entra por um de dois
+caminhos: a variável de ambiente `GEMINI_API_KEY` (arquivo `.env` local, ignorado pelo git, ou o
+painel do Render em produção) **ou** a tela de Integrações do portal (perfil técnico), que grava
+no banco e tem prioridade — o mesmo padrão de precedência de sistemas corporativos. A chave salva
+nunca volta para o navegador; a tela mostra só o estado. Veja o [.env.example](.env.example).
 
 ## Decisões e aprendizados
 

@@ -79,6 +79,13 @@
             </svg>
             Histórico
           </button>
+          <button class="menu-item somente-tecnico" data-view="integracoes" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.5h4l.4-2.5a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z" />
+            </svg>
+            Integrações
+          </button>
           <button class="menu-item" data-view="sobre" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9" />
@@ -201,6 +208,40 @@
             </div>
           </section>
 
+          <section id="view-integracoes" class="view escondido">
+            <div class="cartao bloco-config">
+              <h2>Integração com a IA (Google Gemini)</h2>
+              <p class="config-descricao">
+                A chave salva aqui fica no banco e <strong>tem prioridade</strong> sobre a variável
+                de ambiente <code>GEMINI_API_KEY</code>. Ela nunca volta para o navegador — a tela
+                mostra apenas se está configurada. Gere a sua no
+                <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+              </p>
+              <p id="integracao-status" class="status-integracao"></p>
+
+              <form id="form-integracao" class="form-config">
+                <label for="campo-chave">Chave da API</label>
+                <input
+                  id="campo-chave"
+                  type="password"
+                  placeholder="Cole aqui a chave do Google AI Studio"
+                  minlength="10"
+                  maxlength="200"
+                  autocomplete="off"
+                  required
+                />
+                <label for="campo-modelo">Modelo (opcional)</label>
+                <input id="campo-modelo" type="text" placeholder="gemini-2.5-flash" maxlength="100" />
+                <p id="integracao-erro" class="erro escondido"></p>
+                <p id="integracao-ok" class="sucesso escondido"></p>
+                <div class="config-botoes">
+                  <button id="botao-salvar-integracao" type="submit">Salvar configuração</button>
+                  <button id="botao-testar" class="secundario" type="button">Testar conexão</button>
+                </div>
+              </form>
+            </div>
+          </section>
+
           <section id="view-sobre" class="view escondido">
             <div class="grade-sobre">
               <div class="cartao bloco-sobre">
@@ -228,6 +269,7 @@
                   <li><code>GET /historico</code> — perguntas já respondidas</li>
                   <li><code>POST /chamados</code> — abre chamado com triagem da IA</li>
                   <li><code>GET /chamados</code> — seus chamados (técnico vê a fila inteira)</li>
+                  <li><code>GET/POST /integracoes</code> — configuração da IA (só técnico)</li>
                 </ul>
                 <p><a href="/docs">Documentação interativa (Swagger) →</a></p>
               </div>
