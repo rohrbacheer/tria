@@ -2,11 +2,12 @@
 
 [![CI](https://github.com/rohrbacheer/puchub/actions/workflows/ci.yml/badge.svg)](https://github.com/rohrbacheer/puchub/actions/workflows/ci.yml)
 
-Sistema de perguntas e respostas com IA Generativa: o usuário digita uma dúvida de TI
-(impressora, rede, e-mail, senhas…) e a assistente virtual responde na tela, classificando
-também a categoria da dúvida. A ideia nasceu do **CotraHub**, portal interno de TI que
-desenvolvo no trabalho — aqui recriada do zero como uma mini-aplicação pública para o
-**Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
+Portal de TI com IA Generativa: depois do login, o usuário tira dúvidas com a **assistente
+virtual** (o Gemini responde na tela e classifica a categoria) e **abre chamados** que a IA
+tria automaticamente — categoria, prioridade e uma primeira orientação. O colaborador vê os
+próprios chamados; o perfil de técnico vê a fila inteira. A ideia nasceu do **CotraHub**,
+portal interno de TI que desenvolvo no trabalho — aqui recriada do zero como uma
+mini-aplicação pública para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
 
 🌐 **Aplicação em produção:** `<URL_DO_RENDER_AQUI>`
 
@@ -27,13 +28,25 @@ frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (
 
 ## Endpoints da API
 
-| Método | Rota         | O que faz                                                        |
-| ------ | ------------ | ---------------------------------------------------------------- |
-| `GET`  | `/saude`     | Health check — confirma que a API está no ar                      |
-| `POST` | `/perguntar` | Envia a pergunta à IA e devolve resposta + categoria (grava tudo) |
-| `GET`  | `/historico` | Lista as perguntas já respondidas, em ordem cronológica           |
+| Método | Rota         | O que faz                                                            |
+| ------ | ------------ | --------------------------------------------------------------------- |
+| `GET`  | `/saude`     | Health check — confirma que a API está no ar                           |
+| `POST` | `/login`     | Valida as credenciais e abre a sessão (token Bearer)                   |
+| `POST` | `/perguntar` | Envia a pergunta à IA e devolve resposta + categoria (grava tudo)      |
+| `GET`  | `/historico` | Perguntas já respondidas do usuário logado, em ordem cronológica       |
+| `POST` | `/chamados`  | Abre um chamado: a IA tria categoria, prioridade e primeira orientação |
+| `GET`  | `/chamados`  | Chamados do usuário; o perfil de técnico vê a fila inteira             |
 
 Documentação interativa (Swagger) em `/docs`.
+
+## Contas de demonstração
+
+Criadas automaticamente no primeiro boot (senha `puc123` para todas):
+
+| Login         | Perfil       | O que vê                                     |
+| ------------- | ------------ | -------------------------------------------- |
+| `ana.souza`   | Colaboradora | Assistente, os próprios chamados e histórico |
+| `carlos.lima` | Técnico de TI | O mesmo, mas com a fila inteira de chamados |
 
 ## Rodando localmente
 
