@@ -89,10 +89,16 @@ function entrarNoPortal() {
 
 // Com o token inválido ou expirado, qualquer chamada volta 401: cai para a tela de login.
 async function fetchAuth(url, opcoes = {}) {
-  opcoes.headers = { ...(opcoes.headers || {}), Authorization: "Bearer " + sessao.token };
+  const tokenUsado = sessao.token;
+  opcoes.headers = { ...(opcoes.headers || {}), Authorization: "Bearer " + tokenUsado };
   const resposta = await fetch(url, opcoes);
   if (resposta.status === 401) {
-    mostrarLogin("Sua sessão expirou. Entre de novo.");
+    // Só desloga se o token que falhou ainda é o da sessão atual. Sem isso, uma chamada
+    // lenta feita com um token antigo poderia voltar depois de um novo login e derrubar
+    // a sessão recém-aberta (corrida de token entre deploys que recriam o banco).
+    if (sessao && sessao.token === tokenUsado) {
+      mostrarLogin("Sua sessão expirou. Entre de novo.");
+    }
     throw new Error("Sessão expirada");
   }
   return resposta;
