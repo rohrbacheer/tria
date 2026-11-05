@@ -1,8 +1,10 @@
 """API do PUCHUB — portal de TI com assistente virtual de IA Generativa."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 
 from app import db, ia
 from app.schemas import PerguntaEntrada, RespostaSaida
@@ -45,3 +47,9 @@ def perguntar(entrada: PerguntaEntrada) -> dict:
 def historico() -> list[dict]:
     """Lista todas as perguntas já respondidas, em ordem cronológica (como uma conversa)."""
     return db.listar_historico()
+
+
+# Serve a interface web (pasta /frontend) na raiz do site — mesmo domínio da API, sem CORS.
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+if FRONTEND_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

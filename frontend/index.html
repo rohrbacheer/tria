@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PUCHUB — Assistente de TI</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topo">
+      <div class="marca">
+        <span class="logo">PUC<span class="logo-destaque">HUB</span></span>
+        <span class="subtitulo">Portal de TI · Assistente Virtual</span>
+      </div>
+      <span class="pilula">IA Generativa · Google Gemini</span>
+    </header>
+
+    <main class="cartao">
+      <section id="conversa" class="conversa" aria-live="polite">
+        <div class="balao assistente">
+          <p>
+            Oi! Sou a assistente virtual de TI do PUCHUB. Me conte sua dúvida de tecnologia —
+            computador, impressora, rede, e-mail, senhas — e eu respondo por aqui. 😊
+          </p>
+        </div>
+      </section>
+
+      <p id="mensagem-erro" class="erro escondido"></p>
+
+      <form id="form-pergunta" class="entrada">
+        <input
+          id="pergunta"
+          name="pergunta"
+          type="text"
+          placeholder="Digite sua pergunta de TI… (ex.: minha impressora não imprime)"
+          minlength="5"
+          maxlength="1000"
+          autocomplete="off"
+          required
+        />
+        <button id="botao-enviar" type="submit">Perguntar</button>
+      </form>
+    </main>
+
+    <footer class="rodape">
+      Projeto acadêmico — Desafio da Trilha de DevOps e IA Generativa (PUCPR) ·
+      <a href="/docs">documentação da API</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
