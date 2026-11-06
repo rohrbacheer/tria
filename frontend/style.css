@@ -72,8 +72,10 @@ textarea::placeholder {
   opacity: 0.7;
 }
 
+/* Utilitário de ocultar. Precisa de !important porque `.tela-login` e `.app` definem
+   `display: flex` depois desta regra, e sem a prioridade a troca de tela não acontece. */
 .escondido {
-  display: none;
+  display: none !important;
 }
 
 /* ---------- Tela de login ---------- */
