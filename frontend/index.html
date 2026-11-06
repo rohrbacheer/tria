@@ -15,23 +15,35 @@
   <body>
     <!-- Tela de login: aparece sozinha enquanto não há sessão. -->
     <div id="tela-login" class="tela-login">
-      <div class="login-coluna">
-        <svg class="marca-simbolo" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="12" fill="#1E7D52"></rect><path d="M12 16h20M12 22h13M12 28h8" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"></path></svg>
-        <span class="login-wordmark">tria</span>
-        <p class="login-tagline">Assistente inteligente de classificação de solicitações</p>
+      <div class="login-cartao">
+        <div class="login-marca">
+          <div class="login-marca-topo">
+            <svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="12" fill="#FFFFFF"></rect><path d="M12 16h20M12 22h13M12 28h8" stroke="#1E7D52" stroke-width="3.4" stroke-linecap="round"></path></svg>
+            <span class="login-wordmark">tria</span>
+          </div>
+          <div class="login-marca-centro">
+            <h1>Plataforma de atendimento com IA</h1>
+            <p>Tire dúvidas e abra chamados de TI em um só lugar.</p>
+          </div>
+          <span class="login-pill">Google Gemini</span>
+        </div>
 
-        <form id="form-login" class="login-form">
-          <div class="campo">
-            <label for="campo-login">Usuário</label>
-            <input id="campo-login" name="login" type="text" placeholder="nome.sobrenome" autocomplete="username" required minlength="3" />
-          </div>
-          <div class="campo">
-            <label for="campo-senha">Senha</label>
-            <input id="campo-senha" name="senha" type="password" autocomplete="current-password" required minlength="3" />
-          </div>
-          <p id="login-erro" class="erro escondido"></p>
-          <button class="botao" type="submit">Entrar</button>
-        </form>
+        <div class="login-form-area">
+          <h2>Entrar</h2>
+          <form id="form-login" class="login-form">
+            <div class="campo">
+              <label for="campo-login">Usuário</label>
+              <input id="campo-login" name="login" type="text" placeholder="nome.sobrenome" autocomplete="username" required minlength="3" />
+            </div>
+            <div class="campo">
+              <label for="campo-senha">Senha</label>
+              <input id="campo-senha" name="senha" type="password" autocomplete="current-password" required minlength="3" />
+            </div>
+            <p id="login-erro" class="erro escondido"></p>
+            <button class="botao" type="submit">Entrar no portal</button>
+          </form>
+          <p class="login-rodape">DevOps e IA Generativa · PUCPR</p>
+        </div>
       </div>
     </div>
 
@@ -257,11 +269,10 @@
               <div class="cartao bloco-sobre">
                 <h2>O que é</h2>
                 <p>
-                  A Tria é uma assistente inteligente de classificação de solicitações de TI.
-                  Você pergunta e o Google Gemini responde na tela, classificando a categoria da
-                  dúvida. Nas solicitações manuais, você classifica e a Tria escreve a primeira
-                  orientação. Projeto individual do Desafio da Trilha de DevOps e IA Generativa
-                  (PUCPR).
+                  A Tria é uma plataforma de atendimento de TI com IA. Você tira dúvidas com o
+                  Google Gemini e, se a orientação não resolve, a Tria abre o chamado já
+                  classificado e encaminhado para a equipe certa. Projeto individual do Desafio da
+                  Trilha de DevOps e IA Generativa (PUCPR).
                 </p>
               </div>
               <div class="cartao bloco-sobre">

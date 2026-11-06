@@ -1,31 +1,35 @@
-/* Tria, assistente inteligente de classificação de solicitações.
-   Visual minimalista em verde: página clara, cartões brancos, barra lateral branca.
+/* Tria — Plataforma de atendimento com IA.
+   Visual verde minimalista: página clara, cartões brancos, sidebar com item ativo em barra verde.
    Tudo lê os tokens de tema abaixo; nenhum componente tem cor escrita à mão. */
 
 :root {
   color-scheme: light;
 
-  --bg: #f6f8f7;
-  --surface: #ffffff;
-  --surface2: #f1f5f2;
-  --line: #e3e9e5;
-  --linha-campo: #dce4df;
-  --ink: #16241d;
-  --mut: #5f6e66;
+  --bg: #F6F8F7;
+  --surface: #FFFFFF;
+  --surface2: #F1F5F2;
+  --line: #E3E9E5;
+  --linha-campo: #DCE4DF;
+  --ink: #16241D;
+  --mut: #5F6E66;
 
-  --verde: #1e7d52;
-  --verde-escuro: #14543a;
-  --verde-claro: #e8f2ec;
-  --sobre-verde: #ffffff;
+  --verde: #1E7D52;
+  --verde-escuro: #14543A;
+  --verde-claro: #E8F2EC;
+  --sobre-verde: #FFFFFF;
 
-  --alerta: #b3362b;
-  --alerta-fundo: #f7e9e7;
-  --atencao: #8a5a00;
-  --atencao-fundo: #f5eddd;
+  --alerta: #B3362B;
+  --alerta-fundo: #F7E9E7;
+  --atencao: #8A5A00;
+  --atencao-fundo: #F5EDDD;
 
-  --raio-card: 14px;
-  --raio-controle: 9px;
-  --h-controle: 42px;
+  --equipe-cor: #3C4B61;
+  --equipe-fundo: #EEF1F5;
+
+  --raio-card: 16px;
+  --raio-controle: 10px;
+  --h-controle: 46px;
+  --sombra: 0 1px 2px rgba(20, 84, 58, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,22 +37,25 @@
     color-scheme: dark;
 
     --bg: #212724;
-    --surface: #2a312d;
-    --surface2: #343c37;
-    --line: #3e4742;
-    --linha-campo: #46504a;
-    --ink: #e8ece9;
-    --mut: #a3b0a8;
+    --surface: #2A312D;
+    --surface2: #343C37;
+    --line: #3E4742;
+    --linha-campo: #46504A;
+    --ink: #E8ECE9;
+    --mut: #A3B0A8;
 
-    --verde: #4fb183;
-    --verde-escuro: #7fcaa5;
-    --verde-claro: #2d4236;
-    --sobre-verde: #10231a;
+    --verde: #4FB183;
+    --verde-escuro: #7FCAA5;
+    --verde-claro: #2D4236;
+    --sobre-verde: #10231A;
 
-    --alerta: #e4604f;
-    --alerta-fundo: #45302d;
-    --atencao: #dfa63f;
-    --atencao-fundo: #42382a;
+    --alerta: #E4604F;
+    --alerta-fundo: #45302D;
+    --atencao: #DFA63F;
+    --atencao-fundo: #42382A;
+
+    --equipe-cor: #AFC0DA;
+    --equipe-fundo: #333B47;
   }
 }
 
@@ -72,102 +79,14 @@ textarea::placeholder {
   opacity: 0.7;
 }
 
-/* Utilitário de ocultar. Precisa de !important porque `.tela-login` e `.app` definem
-   `display: flex` depois desta regra, e sem a prioridade a troca de tela não acontece. */
 .escondido {
   display: none !important;
 }
 
-/* ---------- Tela de login ---------- */
-
-.tela-login {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-}
-
-.login-coluna {
-  width: 100%;
-  max-width: 384px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.marca-simbolo {
-  flex-shrink: 0;
-}
-
-.login-wordmark {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -1px;
-  color: var(--ink);
-}
-
-.login-tagline {
-  margin: 0 0 16px;
-  font-size: 14px;
-  color: var(--mut);
-  text-align: center;
-}
-
-.login-form {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--raio-card);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.login-form label,
-.form-solicitacao label,
-.form-config label,
-.rotulo {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.login-form input,
-.form-solicitacao input,
-.form-solicitacao select,
-.form-config input {
-  height: var(--h-controle);
-  padding: 0 14px;
-  border: 1px solid var(--linha-campo);
-  border-radius: var(--raio-controle);
-  background: var(--surface);
-  color: var(--ink);
-  font: inherit;
-  outline: none;
-  width: 100%;
-}
-
-.login-form input:focus,
-.form-solicitacao input:focus,
-.form-solicitacao select:focus,
-.form-solicitacao textarea:focus,
-.form-config input:focus,
-.entrada input:focus {
-  border-color: var(--verde);
-  box-shadow: 0 0 0 3px rgb(30 125 82 / 0.15);
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+/* ---------- Botões ---------- */
 
 .botao {
-  height: 44px;
+  height: 48px;
   padding: 0 24px;
   display: inline-flex;
   align-items: center;
@@ -202,22 +121,45 @@ textarea::placeholder {
   background: var(--verde-claro);
 }
 
-.login-dica {
-  margin: 12px 0 0;
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--mut);
-  text-align: center;
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.login-dica code,
-.bloco-sobre code,
-.config-descricao code {
+.campo label,
+.rotulo,
+.form-config label {
   font-size: 12px;
+  font-weight: 600;
   color: var(--ink);
-  background: var(--surface2);
-  padding: 1px 6px;
-  border-radius: 6px;
+}
+
+.campo input,
+.form-solicitacao input,
+.form-solicitacao select,
+.form-config input,
+.login-form input {
+  width: 100%;
+  height: var(--h-controle);
+  padding: 0 14px;
+  border: 1px solid var(--linha-campo);
+  border-radius: var(--raio-controle);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+
+.campo input:focus,
+.form-solicitacao input:focus,
+.form-solicitacao select:focus,
+.form-solicitacao textarea:focus,
+.form-config input:focus,
+.login-form input:focus,
+.entrada input:focus {
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgb(30 125 82 / 0.14);
 }
 
 .erro {
@@ -231,12 +173,135 @@ textarea::placeholder {
 
 .sucesso {
   margin: 0;
-  padding: 10px 14px;
+  padding: 11px 14px;
   border-radius: var(--raio-controle);
   background: var(--verde-claro);
-  color: var(--verde);
+  color: var(--verde-escuro);
   font-size: 13px;
   font-weight: 500;
+}
+
+/* ---------- Tela de login (dois painéis) ---------- */
+
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.login-cartao {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 920px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(20, 84, 58, 0.1);
+}
+
+.login-marca {
+  flex: 1 1 360px;
+  min-width: 290px;
+  background: linear-gradient(160deg, #1e7d52, #10402b);
+  color: #ffffff;
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.login-marca-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-wordmark {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.login-marca-centro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.login-marca-centro h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.login-marca-centro p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgb(255 255 255 / 0.8);
+}
+
+.login-pill {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgb(255 255 255 / 0.14);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.login-form-area {
+  flex: 1 1 340px;
+  min-width: 290px;
+  padding: 48px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-form-area h2 {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-form .botao {
+  margin-top: 8px;
+}
+
+.login-form .erro {
+  margin-top: 4px;
+}
+
+.login-rodape {
+  margin: 24px 0 0;
+  font-size: 12px;
+  color: var(--mut);
+  text-align: center;
+}
+
+@media (max-width: 680px) {
+  .login-marca {
+    padding: 32px 28px;
+  }
+  .login-marca-centro h1 {
+    font-size: 26px;
+  }
 }
 
 /* ---------- Estrutura do portal ---------- */
@@ -247,25 +312,24 @@ textarea::placeholder {
 }
 
 .sidebar {
-  width: 240px;
+  width: 248px;
   flex-shrink: 0;
   background: var(--surface);
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  padding: 22px 14px;
+  padding: 20px 14px;
 }
 
 .marca {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 10px;
+  padding: 4px 10px 22px;
 }
 
 .marca span {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--ink);
@@ -274,15 +338,16 @@ textarea::placeholder {
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
 }
 
 .menu-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 38px;
+  gap: 11px;
+  min-height: 40px;
   padding: 0 12px;
   border: 0;
   border-radius: var(--raio-controle);
@@ -296,8 +361,8 @@ textarea::placeholder {
 }
 
 .menu-item svg {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
 }
 
@@ -311,25 +376,34 @@ textarea::placeholder {
   font-weight: 600;
 }
 
+.menu-item.ativo::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--verde);
+}
+
 .sidebar-rodape {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 11px;
-  color: var(--mut);
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
 }
 
 .usuario-box {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 10px 0;
-  border-top: 1px solid var(--line);
 }
 
 .usuario-avatar {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--verde-claro);
   color: var(--verde-escuro);
@@ -377,8 +451,10 @@ textarea::placeholder {
 .status {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 10px;
+  gap: 7px;
+  padding: 0 2px;
+  font-size: 11px;
+  color: var(--mut);
 }
 
 .dot {
@@ -397,7 +473,9 @@ textarea::placeholder {
 }
 
 .credito {
-  padding: 0 10px;
+  padding: 0 2px;
+  font-size: 11px;
+  color: var(--mut);
 }
 
 /* ---------- Área principal ---------- */
@@ -410,22 +488,18 @@ textarea::placeholder {
 }
 
 .topo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 26px 36px 0;
+  padding: 24px 32px 0;
 }
 
 .topo h1 {
   margin: 0;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 .conteudo {
   flex: 1;
-  padding: 20px 36px 32px;
+  padding: 20px 32px 28px;
   min-width: 0;
 }
 
@@ -448,17 +522,18 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--raio-card);
+  box-shadow: var(--sombra);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  max-width: 860px;
+  max-width: 840px;
 }
 
 /* ---------- Assistente (chat) ---------- */
 
 .conversa {
   min-height: 340px;
-  max-height: 58vh;
+  max-height: 56vh;
   overflow-y: auto;
   padding: 24px;
   display: flex;
@@ -467,8 +542,8 @@ textarea::placeholder {
 }
 
 .balao {
-  max-width: 78%;
-  padding: 12px 16px;
+  max-width: 80%;
+  padding: 13px 16px;
   font-size: 14px;
   line-height: 1.55;
 }
@@ -482,14 +557,14 @@ textarea::placeholder {
   align-self: flex-end;
   background: var(--verde);
   color: var(--sobre-verde);
-  border-radius: 12px 12px 4px 12px;
+  border-radius: 14px 14px 4px 14px;
 }
 
 .balao.assistente {
   align-self: flex-start;
   background: var(--surface2);
   color: var(--ink);
-  border-radius: 12px 12px 12px 4px;
+  border-radius: 14px 14px 14px 4px;
 }
 
 .balao .categoria {
@@ -509,6 +584,13 @@ textarea::placeholder {
   font-style: italic;
 }
 
+.balao-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
 .conversa-erro {
   margin: 0 24px 10px;
 }
@@ -516,9 +598,9 @@ textarea::placeholder {
 .acao-nao-resolveu {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin: 0 24px 12px;
+  margin: 0 24px 16px;
   padding: 12px 16px;
   background: var(--surface2);
   border-radius: var(--raio-controle);
@@ -527,35 +609,9 @@ textarea::placeholder {
 }
 
 .acao-nao-resolveu .botao {
-  height: 36px;
+  height: 38px;
   padding: 0 16px;
   font-size: 13px;
-}
-
-.balao-pills {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.pill-equipe {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--mut) 18%, transparent);
-}
-
-.selo-tria {
-  display: inline-block;
-  margin-left: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: var(--verde-escuro);
-  background: var(--verde-claro);
-  padding: 2px 7px;
-  border-radius: 999px;
-  vertical-align: middle;
 }
 
 .entrada {
@@ -569,8 +625,8 @@ textarea::placeholder {
 .entrada input {
   flex: 1;
   min-width: 0;
-  height: 44px;
-  padding: 0 14px;
+  height: var(--h-controle);
+  padding: 0 16px;
   border: 1px solid var(--linha-campo);
   border-radius: var(--raio-controle);
   background: var(--surface);
@@ -585,7 +641,7 @@ textarea::placeholder {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .linha-classificacao {
@@ -595,7 +651,7 @@ textarea::placeholder {
 }
 
 .linha-classificacao .campo {
-  flex: 1 1 220px;
+  flex: 1 1 230px;
 }
 
 .form-solicitacao textarea {
@@ -676,49 +732,7 @@ textarea::placeholder {
   line-height: 1.6;
 }
 
-/* ---------- Tabelas ---------- */
-
-.tabela-area {
-  padding: 4px 8px 12px;
-  overflow-x: auto;
-}
-
-.tabela {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.tabela th {
-  text-align: left;
-  padding: 14px 16px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--mut);
-  border-bottom: 1px solid var(--line);
-}
-
-.tabela td {
-  padding: 13px 16px;
-  border-bottom: 1px solid var(--surface2);
-  vertical-align: top;
-}
-
-.tabela tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.col-pergunta {
-  max-width: 420px;
-  font-weight: 500;
-}
-
-.col-data {
-  white-space: nowrap;
-  color: var(--mut);
-}
+/* ---------- Pills ---------- */
 
 .pill {
   display: inline-block;
@@ -746,6 +760,69 @@ textarea::placeholder {
   background: var(--verde-claro);
 }
 
+.pill-equipe {
+  color: var(--equipe-cor);
+  background: var(--equipe-fundo);
+}
+
+.selo-tria {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--verde-escuro);
+  background: var(--verde-claro);
+  padding: 2px 7px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+/* ---------- Tabelas ---------- */
+
+.tabela-area {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--mut);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.tabela td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--surface2);
+  vertical-align: top;
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.col-pergunta {
+  max-width: 420px;
+  font-weight: 500;
+}
+
+.col-data {
+  white-space: nowrap;
+  color: var(--mut);
+}
+
 .tabela.sem-solicitante .col-solicitante {
   display: none;
 }
@@ -759,8 +836,8 @@ textarea::placeholder {
 
 .bloco-config {
   padding: 26px;
-  max-width: 640px;
-  gap: 16px;
+  max-width: 660px;
+  gap: 18px;
 }
 
 .bloco-config h2 {
@@ -776,6 +853,14 @@ textarea::placeholder {
   color: var(--mut);
 }
 
+.config-descricao code {
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
 .config-descricao a {
   color: var(--verde);
   font-weight: 600;
@@ -783,14 +868,14 @@ textarea::placeholder {
 
 .status-integracao {
   margin: 0;
-  padding: 10px 14px;
+  padding: 11px 14px;
   border-radius: var(--raio-controle);
   font-size: 13px;
   font-weight: 600;
 }
 
 .status-integracao.ok {
-  color: var(--verde);
+  color: var(--verde-escuro);
   background: var(--verde-claro);
 }
 
@@ -802,11 +887,11 @@ textarea::placeholder {
 .form-config {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .config-botoes {
-  margin-top: 6px;
+  margin-top: 4px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -818,11 +903,11 @@ textarea::placeholder {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
-  max-width: 860px;
+  max-width: 880px;
 }
 
 .bloco-sobre {
-  padding: 20px;
+  padding: 22px;
   display: block;
 }
 
@@ -844,6 +929,14 @@ textarea::placeholder {
   padding-left: 18px;
 }
 
+.bloco-sobre code {
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
 .bloco-sobre a {
   color: var(--verde);
   font-weight: 600;
@@ -860,16 +953,32 @@ textarea::placeholder {
     width: 100%;
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
     padding: 10px 16px;
+  }
+
+  .marca {
+    padding: 4px 6px;
   }
 
   .menu {
     flex-direction: row;
     overflow-x: auto;
+    flex: 1 1 100%;
+    order: 3;
   }
 
   .sidebar-rodape {
+    border-top: 0;
+    padding-top: 0;
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .credito,
+  .status {
     display: none;
   }
 
