@@ -9,7 +9,7 @@ de TI em linguagem simples e classifica solicitações.
 
 Escolhi **FastAPI (Python 3.12)** no backend porque é um framework enxuto, com validação
 automática via Pydantic e documentação Swagger pronta, o que deixa os dois endpoints exigidos
-muito claros de demonstrar. Para a IA usei o **Google Gemini (gemini-3.8-flash)** com **saída
+muito claros de demonstrar. Para a IA usei o **Google Gemini (gemini-flash-lite-latest)** com **saída
 estruturada em JSON**: em vez de interpretar texto livre, a API recebe sempre `resposta` e
 `categoria` validadas por um schema, com valor seguro quando o modelo foge das categorias. O
 histórico, os usuários de demonstração (perfis de usuário, técnico e administrador) e as

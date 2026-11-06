@@ -20,7 +20,7 @@ Infraestrutura; Acesso e senhas → Segurança e Acessos; Outro → Suporte Téc
 ## Como funciona
 
 ```
-frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (gemini-3.8-flash)
+frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (gemini-flash-lite-latest)
                                         ↓
                                  SQLite (usuários, sessões, perguntas e solicitações)
 ```

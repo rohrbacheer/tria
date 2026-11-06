@@ -44,7 +44,7 @@ class IntegracaoEntrada(BaseModel):
     """Configuração da IA enviada pela tela de Integrações (só o administrador)."""
 
     gemini_api_key: str = Field(min_length=10, max_length=200)
-    modelo: str | None = Field(default=None, max_length=100, examples=["gemini-3.8-flash"])
+    modelo: str | None = Field(default=None, max_length=100, examples=["gemini-flash-lite-latest"])
 
 
 class IntegracaoSaida(BaseModel):

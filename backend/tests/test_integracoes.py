@@ -60,7 +60,7 @@ def test_sem_chave_nenhuma_levanta_erro(cliente, monkeypatch):
 
 def test_modelo_padrao_quando_nada_configurado(cliente, monkeypatch):
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
-    assert ia._modelo() == "gemini-3.8-flash"
+    assert ia._modelo() == "gemini-flash-lite-latest"
 
 
 def test_testar_conexao_ok(cliente, auth_admin, monkeypatch):

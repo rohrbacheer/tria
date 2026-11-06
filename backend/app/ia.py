@@ -69,7 +69,7 @@ def _chave_api() -> str:
 
 def _modelo() -> str:
     """Modelo do Gemini, com a mesma precedência da chave (banco > ambiente > padrão)."""
-    return db.ler_config("gemini_modelo") or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+    return db.ler_config("gemini_modelo") or os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
 
 
 def status_integracao() -> dict:
