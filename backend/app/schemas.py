@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.ia import CATEGORIAS, PRIORIDADES
+from app.ia import CATEGORIAS, PRIORIDADES  # noqa: F401 (reexportados para os validadores)
 
 
 class LoginEntrada(BaseModel):
@@ -82,8 +82,18 @@ class SolicitacaoEntrada(BaseModel):
         return valor
 
 
+class SolicitacaoAutoEntrada(BaseModel):
+    """Relato livre que a Tria classifica e vira um chamado (quando a orientação não resolveu)."""
+
+    descricao: str = Field(
+        min_length=5,
+        max_length=2000,
+        examples=["Meu computador não liga, já tentei trocar a tomada e nada."],
+    )
+
+
 class SolicitacaoSaida(BaseModel):
-    """Solicitação completa, com a orientação inicial escrita pela IA."""
+    """Solicitação completa, com a orientação da IA e a equipe de destino."""
 
     id: int
     solicitante: str
@@ -91,6 +101,8 @@ class SolicitacaoSaida(BaseModel):
     descricao: str
     categoria: str
     prioridade: str
+    equipe: str
     orientacao: str
+    origem: str
     status: str
     criado_em: str

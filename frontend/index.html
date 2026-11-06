@@ -104,6 +104,11 @@
 
             <p id="mensagem-erro" class="erro conversa-erro escondido"></p>
 
+            <div id="acao-nao-resolveu" class="acao-nao-resolveu escondido">
+              <span>Isso não resolveu?</span>
+              <button id="botao-abrir-auto" class="botao secundario" type="button">A Tria abre um chamado para você</button>
+            </div>
+
             <form id="form-pergunta" class="entrada">
               <label for="pergunta" class="escondido">Sua pergunta</label>
               <input
@@ -169,6 +174,7 @@
               <div class="resultado-pills">
                 <span id="resultado-categoria" class="pill"></span>
                 <span id="resultado-prioridade" class="pill"></span>
+                <span id="resultado-equipe" class="pill pill-equipe"></span>
               </div>
               <p class="resultado-legenda">Enquanto a equipe não chega, a Tria sugere:</p>
               <p id="resultado-orientacao" class="resultado-orientacao"></p>
@@ -185,6 +191,7 @@
                     <th>Título</th>
                     <th>Categoria</th>
                     <th>Prioridade</th>
+                    <th>Equipe</th>
                     <th>Status</th>
                     <th>Quando</th>
                   </tr>
@@ -279,6 +286,7 @@
                   <li><code>GET /historico</code> perguntas já respondidas</li>
                   <li><code>GET /opcoes</code> categorias e prioridades</li>
                   <li><code>POST /solicitacoes</code> você classifica, a IA orienta</li>
+                  <li><code>POST /solicitacoes/auto</code> a Tria classifica e roteia para a equipe</li>
                   <li><code>GET /solicitacoes</code> suas solicitações (técnico e admin veem a fila)</li>
                   <li><code>GET/POST /integracoes</code> configuração da IA (só administrador)</li>
                 </ul>

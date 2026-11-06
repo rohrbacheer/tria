@@ -2,14 +2,18 @@
 
 [![CI](https://github.com/rohrbacheer/tria/actions/workflows/ci.yml/badge.svg)](https://github.com/rohrbacheer/tria/actions/workflows/ci.yml)
 
-Portal de TI com IA Generativa e três perfis de acesso. Depois do login, o usuário tira dúvidas
-com a **Tria** (o Google Gemini responde na tela e classifica a categoria) e **abre
-solicitações** com título, descrição e classificação escolhida por ele (categoria e prioridade),
-enquanto a IA escreve a **primeira orientação** para seguir até o atendimento chegar. O usuário
-vê as próprias solicitações; **técnico** e **administrador** veem a fila inteira; só o
-administrador configura a integração com a IA pela tela. A ideia nasceu do **CotraHub**, portal
-interno de TI que desenvolvo no trabalho, aqui recriada do zero como uma mini-aplicação pública
-para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
+Portal de TI com IA Generativa e três perfis de acesso. Depois do login, o usuário descreve o
+problema para a **Tria** (o Google Gemini responde na tela, orienta e classifica a categoria).
+Se a orientação não resolver, a Tria **abre um chamado automaticamente**, já classificado
+(categoria e prioridade) e **roteado para a equipe responsável** por aquela categoria. Também dá
+para abrir uma solicitação manual, em que o usuário classifica e a IA escreve a primeira
+orientação. O usuário vê as próprias solicitações; **técnico** e **administrador** veem a fila
+inteira; só o administrador configura a integração com a IA pela tela. A ideia nasceu do
+**CotraHub**, portal interno de TI que desenvolvo no trabalho, aqui recriada do zero como uma
+mini-aplicação pública para o **Desafio da Trilha de DevOps e IA Generativa (PUCPR)**.
+
+**Equipes de atendimento:** Hardware → Suporte Técnico; Software e E-mail → Sistemas; Rede →
+Infraestrutura; Acesso e senhas → Segurança e Acessos; Outro → Suporte Técnico.
 
 🌐 **Aplicação em produção:** https://tria-bqc2.onrender.com
 
@@ -38,6 +42,7 @@ frontend (HTML/CSS/JS puro)  →  backend (FastAPI/Python)  →  Google Gemini (
 | `GET`  | `/historico`    | Perguntas já respondidas do usuário logado, em ordem cronológica         |
 | `GET`  | `/opcoes`       | Categorias e prioridades aceitas na solicitação manual                   |
 | `POST` | `/solicitacoes` | Abre uma solicitação classificada pelo usuário; a IA escreve a orientação |
+| `POST` | `/solicitacoes/auto` | A Tria classifica o relato e abre o chamado roteado para a equipe   |
 | `GET`  | `/solicitacoes` | Solicitações do usuário; técnico e administrador veem a fila inteira     |
 | `GET`  | `/integracoes`  | Estado da integração com a IA (só administrador; a chave nunca volta)    |
 | `POST` | `/integracoes`  | Salva a chave/modelo do Gemini pela tela, vence a variável de ambiente   |

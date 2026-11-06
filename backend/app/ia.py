@@ -124,6 +124,25 @@ def _parse_resposta(texto: str) -> dict:
     return resposta.model_dump()
 
 
+# ---------- Equipes de atendimento ----------
+
+# Cada categoria é atendida por uma equipe. É daqui que sai o roteamento do chamado:
+# a IA escolhe a categoria e o chamado vai direto para o time responsável.
+EQUIPES = {
+    "Hardware": "Suporte Técnico",
+    "Software": "Sistemas",
+    "Rede": "Infraestrutura",
+    "Acesso e senhas": "Segurança e Acessos",
+    "E-mail": "Sistemas",
+    "Outro": "Suporte Técnico",
+}
+
+
+def equipe_de(categoria: str) -> str:
+    """Equipe responsável por uma categoria (com destino seguro para categoria desconhecida)."""
+    return EQUIPES.get(categoria, "Suporte Técnico")
+
+
 # ---------- Orientação inicial da solicitação manual ----------
 
 PRIORIDADES = ["Baixa", "Média", "Alta"]
@@ -158,3 +177,63 @@ def gerar_orientacao(titulo: str, descricao: str, categoria: str, prioridade: st
         ),
     )
     return resposta.text.strip()
+
+
+# ---------- Triagem automática (quando a orientação não resolveu) ----------
+
+PROMPT_TRIAGEM = f"""Você é a Tria, analista de triagem da TI. A pessoa já tentou se virar com uma
+orientação e o problema não se resolveu, então agora você vai abrir um chamado para a equipe.
+A partir do relato dela, classifique o chamado para encaminhar ao time certo.
+
+Regras:
+- "titulo" deve ser um resumo curto do problema, em até 80 caracteres, com as palavras da pessoa.
+- "categoria" deve ser exatamente uma destas: {", ".join(CATEGORIAS)}.
+- "prioridade" deve ser exatamente uma destas: {", ".join(PRIORIDADES)}.
+  Use "Alta" quando o problema impede o trabalho de várias pessoas ou envolve sistema crítico,
+  "Média" quando impede o trabalho de uma pessoa e "Baixa" para dúvidas e melhorias.
+- "resumo" deve ter de 1 a 3 frases descrevendo o problema para quem vai atender, em português,
+  sem jargão e sem travessões.
+Responda somente com o JSON pedido."""
+
+
+class TriagemIA(BaseModel):
+    """Saída estruturada da triagem automática que vira um chamado."""
+
+    titulo: str
+    categoria: str
+    prioridade: str
+    resumo: str
+
+
+def triar_chamado(descricao: str) -> dict:
+    """Pede ao Gemini a classificação completa de um relato para abrir o chamado roteado.
+
+    Devolve titulo, categoria, prioridade, resumo e a equipe derivada da categoria.
+    Assim como as demais, é substituída por um mock nos testes.
+    """
+    cliente = _criar_cliente()
+    resposta = _gerar(
+        cliente,
+        model=_modelo(),
+        contents=descricao,
+        config=types.GenerateContentConfig(
+            system_instruction=PROMPT_TRIAGEM,
+            response_mime_type="application/json",
+            response_schema=TriagemIA,
+            temperature=0.2,
+        ),
+    )
+    return _parse_triagem(resposta.text)
+
+
+def _parse_triagem(texto: str) -> dict:
+    """Valida o JSON da triagem, com valores seguros caso a IA fuja das opções."""
+    dados = json.loads(texto)
+    triagem = TriagemIA(**dados)
+    if triagem.categoria not in CATEGORIAS:
+        triagem.categoria = "Outro"
+    if triagem.prioridade not in PRIORIDADES:
+        triagem.prioridade = "Média"
+    resultado = triagem.model_dump()
+    resultado["equipe"] = equipe_de(resultado["categoria"])
+    return resultado

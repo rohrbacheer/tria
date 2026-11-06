@@ -32,3 +32,28 @@ def test_listas_de_classificacao_do_chamado_manual():
     # As mesmas listas alimentam o GET /opcoes e a validação do POST /chamados.
     assert ia.PRIORIDADES == ["Baixa", "Média", "Alta"]
     assert "Outro" in ia.CATEGORIAS
+
+
+def test_equipe_de_cada_categoria():
+    assert ia.equipe_de("Rede") == "Infraestrutura"
+    assert ia.equipe_de("Acesso e senhas") == "Segurança e Acessos"
+    assert ia.equipe_de("E-mail") == "Sistemas"
+    assert ia.equipe_de("categoria inexistente") == "Suporte Técnico"  # destino seguro
+
+
+def test_parse_triagem_deriva_equipe_e_corrige_valores_invalidos():
+    texto = json.dumps(
+        {"titulo": "Sem rede", "categoria": "Rede", "prioridade": "Altíssima", "resumo": "Rede caiu."}
+    )
+    resultado = ia._parse_triagem(texto)
+    assert resultado["equipe"] == "Infraestrutura"  # derivada da categoria
+    assert resultado["prioridade"] == "Média"  # prioridade inválida vira o padrão seguro
+
+
+def test_parse_triagem_categoria_desconhecida_vai_para_outro_e_suporte():
+    texto = json.dumps(
+        {"titulo": "Dúvida", "categoria": "Jardinagem", "prioridade": "Baixa", "resumo": "x"}
+    )
+    resultado = ia._parse_triagem(texto)
+    assert resultado["categoria"] == "Outro"
+    assert resultado["equipe"] == "Suporte Técnico"

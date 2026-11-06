@@ -89,7 +89,9 @@ def init_db() -> None:
                 descricao TEXT NOT NULL,
                 categoria TEXT NOT NULL,
                 prioridade TEXT NOT NULL,
+                equipe TEXT NOT NULL DEFAULT 'Suporte Técnico',
                 orientacao TEXT NOT NULL,
+                origem TEXT NOT NULL DEFAULT 'manual',
                 status TEXT NOT NULL,
                 criado_em TEXT NOT NULL
             )
@@ -184,17 +186,25 @@ def listar_historico(usuario_id: int) -> list[dict]:
 
 
 def inserir_solicitacao(
-    usuario_id: int, titulo: str, descricao: str, categoria: str, prioridade: str, orientacao: str
+    usuario_id: int,
+    titulo: str,
+    descricao: str,
+    categoria: str,
+    prioridade: str,
+    equipe: str,
+    orientacao: str,
+    origem: str = "manual",
 ) -> dict:
-    """Grava uma solicitação classificada pelo usuário (com a orientação da IA) e devolve o registro."""
+    """Grava uma solicitação (manual ou aberta pela Tria) e devolve o registro completo."""
     criado_em = _agora()
     with _conectar() as conexao:
         cursor = conexao.execute(
             """
-            INSERT INTO solicitacoes (usuario_id, titulo, descricao, categoria, prioridade, orientacao, status, criado_em)
-            VALUES (?, ?, ?, ?, ?, ?, 'Aberta', ?)
+            INSERT INTO solicitacoes
+                (usuario_id, titulo, descricao, categoria, prioridade, equipe, orientacao, origem, status, criado_em)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Aberta', ?)
             """,
-            (usuario_id, titulo, descricao, categoria, prioridade, orientacao, criado_em),
+            (usuario_id, titulo, descricao, categoria, prioridade, equipe, orientacao, origem, criado_em),
         )
         novo_id = cursor.lastrowid
         solicitante = conexao.execute(
@@ -207,7 +217,9 @@ def inserir_solicitacao(
         "descricao": descricao,
         "categoria": categoria,
         "prioridade": prioridade,
+        "equipe": equipe,
         "orientacao": orientacao,
+        "origem": origem,
         "status": "Aberta",
         "criado_em": criado_em,
     }
@@ -218,7 +230,7 @@ def listar_solicitacoes(usuario: dict) -> list[dict]:
     inteira, o usuário comum vê somente as próprias."""
     consulta = """
         SELECT s.id, u.nome AS solicitante, s.titulo, s.descricao, s.categoria, s.prioridade,
-               s.orientacao, s.status, s.criado_em
+               s.equipe, s.orientacao, s.origem, s.status, s.criado_em
         FROM solicitacoes s JOIN usuarios u ON u.id = s.usuario_id
         {filtro}
         ORDER BY s.id DESC

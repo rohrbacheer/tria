@@ -14,9 +14,12 @@ estruturada em JSON**: em vez de interpretar texto livre, a API recebe sempre `r
 `categoria` validadas por um schema, com valor seguro quando o modelo foge das categorias. O
 histórico, os usuários de demonstração (perfis de usuário, técnico e administrador) e as
 solicitações ficam em **SQLite**, que dispensa servidor de banco e basta para o escopo. A IA
-entra em dois pontos: na assistente ela responde e classifica a pergunta com saída estruturada;
-na solicitação manual é o contrário, a pessoa classifica (título, categoria e prioridade) e a IA
-escreve a primeira orientação. O frontend é
+entra em três pontos, todos com saída estruturada: na assistente ela responde e classifica a
+pergunta; se a orientação não resolve, ela faz a triagem completa do relato (título, categoria,
+prioridade, resumo) e o chamado é aberto e roteado para a equipe responsável pela categoria; e na
+solicitação manual é o contrário, a pessoa classifica e a IA escreve a primeira orientação. O
+roteamento por equipe é determinístico a partir da categoria que a IA escolhe, para ser previsível
+e testável. O frontend é
 **HTML, CSS e JavaScript puros**, servido pelo próprio FastAPI — mesma origem, sem CORS, um
 único serviço no deploy. Testes com **pytest** e a chamada à IA **mockada** (nenhum teste depende
 da API externa), cobertura mínima de 70% travada no próprio pytest — atingi 95%. O **GitHub

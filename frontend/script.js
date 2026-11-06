@@ -82,6 +82,8 @@ function entrarNoPortal() {
 
   // Zera a conversa (fica só a saudação) e carrega o histórico de quem entrou.
   conversa.querySelectorAll(".balao:not(#saudacao)").forEach((b) => b.remove());
+  ultimaPergunta = "";
+  document.getElementById("acao-nao-resolveu").classList.add("escondido");
   verificarSaude();
   carregarConversa();
   carregarOpcoes();
@@ -241,6 +243,7 @@ formSolicitacao.addEventListener("submit", async (evento) => {
     const pillPrioridade = document.getElementById("resultado-prioridade");
     pillPrioridade.textContent = "Prioridade " + solicitacao.prioridade;
     pillPrioridade.className = classeDePrioridade(solicitacao.prioridade);
+    document.getElementById("resultado-equipe").textContent = "Equipe " + solicitacao.equipe;
     document.getElementById("resultado-orientacao").textContent = solicitacao.orientacao;
     solicitacaoResultado.classList.remove("escondido");
     formSolicitacao.reset();
@@ -297,6 +300,19 @@ async function carregarSolicitacoes() {
     pillPrioridade.textContent = solicitacao.prioridade;
     colunaPrioridade.appendChild(pillPrioridade);
 
+    const colunaEquipe = document.createElement("td");
+    const pillEquipe = document.createElement("span");
+    pillEquipe.className = "pill pill-equipe";
+    pillEquipe.textContent = solicitacao.equipe;
+    colunaEquipe.appendChild(pillEquipe);
+    if (solicitacao.origem === "tria") {
+      const selo = document.createElement("span");
+      selo.className = "selo-tria";
+      selo.textContent = "via Tria";
+      selo.title = "Chamado aberto automaticamente pela Tria";
+      colunaEquipe.appendChild(selo);
+    }
+
     const colunaStatus = document.createElement("td");
     colunaStatus.textContent = solicitacao.status;
 
@@ -310,6 +326,7 @@ async function carregarSolicitacoes() {
       colunaTitulo,
       colunaCategoria,
       colunaPrioridade,
+      colunaEquipe,
       colunaStatus,
       colunaData
     );
@@ -449,6 +466,10 @@ async function verificarSaude() {
 
 /* ---------- Assistente (chat) ---------- */
 
+const acaoNaoResolveu = document.getElementById("acao-nao-resolveu");
+const botaoAbrirAuto = document.getElementById("botao-abrir-auto");
+let ultimaPergunta = ""; // guarda o último relato, para a Tria abrir o chamado se não resolver
+
 function adicionarBalao(texto, tipo, categoria) {
   const balao = document.createElement("div");
   balao.className = "balao " + tipo;
@@ -486,6 +507,7 @@ formulario.addEventListener("submit", async (evento) => {
   if (!pergunta) return;
 
   mensagemErro.classList.add("escondido");
+  acaoNaoResolveu.classList.add("escondido");
   botaoEnviar.disabled = true;
   campoPergunta.value = "";
 
@@ -507,6 +529,9 @@ formulario.addEventListener("submit", async (evento) => {
     const item = await resposta.json();
     digitando.remove();
     adicionarBalao(item.resposta, "assistente", item.categoria);
+    // Depois de orientar, oferece abrir um chamado caso não tenha resolvido.
+    ultimaPergunta = pergunta;
+    acaoNaoResolveu.classList.remove("escondido");
   } catch (erro) {
     digitando.remove();
     mensagemErro.textContent = erro.message;
@@ -515,6 +540,50 @@ formulario.addEventListener("submit", async (evento) => {
   } finally {
     botaoEnviar.disabled = false;
     campoPergunta.focus();
+  }
+});
+
+// "Isso não resolveu": a Tria classifica o relato e abre o chamado roteado para a equipe.
+botaoAbrirAuto.addEventListener("click", async () => {
+  if (!ultimaPergunta) return;
+  mensagemErro.classList.add("escondido");
+  acaoNaoResolveu.classList.add("escondido");
+  const pensando = adicionarBalao("A Tria está abrindo um chamado e encaminhando para a equipe…", "assistente digitando");
+
+  try {
+    const resposta = await fetchAuth("/solicitacoes/auto", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ descricao: ultimaPergunta }),
+    });
+    if (!resposta.ok) {
+      const corpo = await resposta.json().catch(() => ({}));
+      throw new Error(corpo.detail || "Não foi possível abrir o chamado. Tente novamente.");
+    }
+
+    const ch = await resposta.json();
+    pensando.remove();
+    const balao = adicionarBalao(
+      "Abri o chamado #" + ch.id + " (" + ch.titulo + ") e encaminhei para a equipe " + ch.equipe +
+        ". Você acompanha o andamento em Solicitações.",
+      "assistente"
+    );
+    // Mostra as etiquetas de categoria, prioridade e equipe no balão de confirmação.
+    const pills = document.createElement("div");
+    pills.className = "balao-pills";
+    for (const [cls, txt] of [["pill", ch.categoria], [classeDePrioridade(ch.prioridade), ch.prioridade], ["pill pill-equipe", ch.equipe]]) {
+      const p = document.createElement("span");
+      p.className = cls;
+      p.textContent = txt;
+      pills.appendChild(p);
+    }
+    balao.appendChild(pills);
+    conversa.scrollTop = conversa.scrollHeight;
+  } catch (erro) {
+    pensando.remove();
+    mensagemErro.textContent = erro.message;
+    mensagemErro.classList.remove("escondido");
+    acaoNaoResolveu.classList.remove("escondido"); // deixa tentar de novo
   }
 });
 

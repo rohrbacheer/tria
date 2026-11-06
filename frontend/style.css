@@ -513,6 +513,51 @@ textarea::placeholder {
   margin: 0 24px 10px;
 }
 
+.acao-nao-resolveu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 24px 12px;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-radius: var(--raio-controle);
+  font-size: 13px;
+  color: var(--mut);
+}
+
+.acao-nao-resolveu .botao {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+.balao-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.pill-equipe {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--mut) 18%, transparent);
+}
+
+.selo-tria {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--verde-escuro);
+  background: var(--verde-claro);
+  padding: 2px 7px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
 .entrada {
   display: flex;
   gap: 10px;

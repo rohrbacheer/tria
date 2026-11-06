@@ -59,3 +59,19 @@ def orientacao_mockada(monkeypatch):
     """Substitui a orientação do Gemini por um texto fixo (mock)."""
     monkeypatch.setattr("app.ia.gerar_orientacao", lambda *dados: ORIENTACAO_FALSA)
     return ORIENTACAO_FALSA
+
+
+TRIAGEM_FALSA = {
+    "titulo": "Computador não liga",
+    "categoria": "Hardware",
+    "prioridade": "Alta",
+    "resumo": "A pessoa relata que o computador não liga mesmo após trocar a tomada.",
+    "equipe": "Suporte Técnico",
+}
+
+
+@pytest.fixture()
+def triagem_mockada(monkeypatch):
+    """Substitui a triagem automática do Gemini por um resultado fixo (mock)."""
+    monkeypatch.setattr("app.ia.triar_chamado", lambda descricao: dict(TRIAGEM_FALSA))
+    return TRIAGEM_FALSA

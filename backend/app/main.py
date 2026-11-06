@@ -3,8 +3,13 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
+
+# Carrega backend/.env em desenvolvimento local (a chave do Gemini, por exemplo). Em produção
+# as variáveis vêm do painel do Render e este arquivo não existe, então não atrapalha.
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from app import db, ia
 from app.schemas import (
@@ -14,6 +19,7 @@ from app.schemas import (
     LoginSaida,
     PerguntaEntrada,
     RespostaSaida,
+    SolicitacaoAutoEntrada,
     SolicitacaoEntrada,
     SolicitacaoSaida,
 )
@@ -86,8 +92,8 @@ def historico(usuario: dict = Depends(usuario_atual)) -> list[dict]:
 
 @app.get("/opcoes", tags=["Solicitações"])
 def opcoes(_usuario: dict = Depends(usuario_atual)) -> dict:
-    """Opções de classificação da solicitação manual (as mesmas listas que a IA conhece)."""
-    return {"categorias": ia.CATEGORIAS, "prioridades": ia.PRIORIDADES}
+    """Opções de classificação e as equipes de cada categoria."""
+    return {"categorias": ia.CATEGORIAS, "prioridades": ia.PRIORIDADES, "equipes": ia.EQUIPES}
 
 
 @app.post("/solicitacoes", response_model=SolicitacaoSaida, status_code=201, tags=["Solicitações"])
@@ -103,7 +109,37 @@ def abrir_solicitacao(entrada: SolicitacaoEntrada, usuario: dict = Depends(usuar
             detail="Não foi possível consultar a IA no momento. Tente novamente em instantes.",
         ) from erro
     return db.inserir_solicitacao(
-        usuario["id"], entrada.titulo, entrada.descricao, entrada.categoria, entrada.prioridade, orientacao
+        usuario["id"],
+        entrada.titulo,
+        entrada.descricao,
+        entrada.categoria,
+        entrada.prioridade,
+        ia.equipe_de(entrada.categoria),
+        orientacao,
+        origem="manual",
+    )
+
+
+@app.post("/solicitacoes/auto", response_model=SolicitacaoSaida, status_code=201, tags=["Solicitações"])
+def abrir_solicitacao_auto(entrada: SolicitacaoAutoEntrada, usuario: dict = Depends(usuario_atual)) -> dict:
+    """A Tria classifica o relato (quando a orientação não resolveu) e abre o chamado já
+    roteado para a equipe responsável."""
+    try:
+        triagem = ia.triar_chamado(entrada.descricao)
+    except Exception as erro:
+        raise HTTPException(
+            status_code=502,
+            detail="Não foi possível consultar a IA no momento. Tente novamente em instantes.",
+        ) from erro
+    return db.inserir_solicitacao(
+        usuario["id"],
+        triagem["titulo"],
+        entrada.descricao,
+        triagem["categoria"],
+        triagem["prioridade"],
+        triagem["equipe"],
+        triagem["resumo"],
+        origem="tria",
     )
 
 
