@@ -2,12 +2,35 @@
 
 import json
 import os
+import time
 
 from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
 from app import db
+
+# O Gemini às vezes responde 503/UNAVAILABLE ("high demand") em picos passageiros. Em vez de
+# falhar na cara do usuário, repetimos a chamada algumas vezes com uma espera curta.
+_TENTATIVAS = 3
+_ESPERA_SEGUNDOS = (1.5, 3.0)
+
+
+def _e_transitorio(erro: Exception) -> bool:
+    texto = str(erro).upper()
+    return "503" in texto or "UNAVAILABLE" in texto or "OVERLOADED" in texto or "429" in texto
+
+
+def _gerar(cliente: "genai.Client", **kwargs):
+    """Chama generate_content repetindo quando o erro é transitório (sobrecarga do Gemini)."""
+    for tentativa in range(_TENTATIVAS):
+        try:
+            return cliente.models.generate_content(**kwargs)
+        except Exception as erro:
+            if tentativa < _TENTATIVAS - 1 and _e_transitorio(erro):
+                time.sleep(_ESPERA_SEGUNDOS[tentativa])
+                continue
+            raise
 
 CATEGORIAS = ["Hardware", "Software", "Rede", "Acesso e senhas", "E-mail", "Outro"]
 
@@ -63,7 +86,7 @@ def status_integracao() -> dict:
 def testar_conexao() -> None:
     """Chamada mínima ao Gemini só para validar a chave (botão Testar da tela de Integrações)."""
     cliente = _criar_cliente()
-    cliente.models.generate_content(model=_modelo(), contents="Responda apenas: ok")
+    _gerar(cliente, model=_modelo(), contents="Responda apenas: ok")
 
 
 def _criar_cliente() -> genai.Client:
@@ -78,7 +101,8 @@ def responder_pergunta(pergunta: str) -> dict:
     substituída por um mock, para que nenhum teste dependa da API externa.
     """
     cliente = _criar_cliente()
-    resposta = cliente.models.generate_content(
+    resposta = _gerar(
+        cliente,
         model=_modelo(),
         contents=pergunta,
         config=types.GenerateContentConfig(
@@ -124,7 +148,8 @@ def gerar_orientacao(titulo: str, descricao: str, categoria: str, prioridade: st
         f"Descrição: {descricao}"
     )
     cliente = _criar_cliente()
-    resposta = cliente.models.generate_content(
+    resposta = _gerar(
+        cliente,
         model=_modelo(),
         contents=solicitacao,
         config=types.GenerateContentConfig(
